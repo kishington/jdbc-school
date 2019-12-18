@@ -2,9 +2,12 @@ package ua.com.foxminded.jdbctask.university;
 
 import java.util.Random;
 
+import org.junit.jupiter.api.Test;
+
 public class Student {
 
     private int id;
+    private int groupId;
     private String firstName;
     private String lastName;
 
@@ -17,15 +20,28 @@ public class Student {
             "Timoshenko", "Petrov", "Bashyrov", "Lutsenko", "Kobolev", "Abbas", "Abadi", "Antar", "Arian", "Lyashko",
             "Nikulin", "Vitsin", "Morgunov", "Trump" };
 
-    void setRandomStudent() {
+    public void setRandomStudent() {
         this.id = counter;
         setRandomFirstName();
         setRandomLastName();
         counter++;
     }
+    
+    public void setRandomFullName() {
+        setRandomFirstName();
+        setRandomLastName();
+    }
 
     public int getId() {
         return id;
+    }
+    
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     public String getFirstName() {
@@ -41,6 +57,6 @@ public class Student {
     }
     public void setRandomLastName() {
         int index = random.nextInt(LAST_NAMES.length);
-        this.firstName = LAST_NAMES[index];
+        this.lastName = LAST_NAMES[index];
     }
 }

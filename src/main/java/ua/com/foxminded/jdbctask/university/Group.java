@@ -10,7 +10,7 @@ public class Group {
     private static Random random = new Random();
     private static final String LETTERS = "abcdefghijklmnopqrstuvwxyz";
     
-    public void setRandomCourse() {
+    public void setRandomGroup() {
         this.id = counter;
         setRandomName();
         counter++;
