@@ -34,14 +34,12 @@ public class DataGenerator {
     static final String DROP_STUDENTS_TABLE = "DROP TABLE IF EXISTS students;";
     static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS student_courses";
 
-    public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {        
-        DataGenerator dataGenerator = new DataGenerator();
-        dataGenerator.createTables();
-        dataGenerator.insertGroups();
-        dataGenerator.insertStudents();
-        dataGenerator.insertCourses();
-        dataGenerator.insertStudentsToCoursesRelations();
-        System.out.println("Succes");
+    public void generateData() throws SQLException, IOException, ClassNotFoundException {        
+        createTables();
+        insertGroups();
+        insertStudents();
+        insertCourses();
+        insertStudentsToCoursesRelations();
     }
     
     public void createTables() throws SQLException, IOException, ClassNotFoundException {

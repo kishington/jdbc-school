@@ -1,10 +1,9 @@
 CREATE TABLE IF NOT EXISTS public.students
 (
-    student_id integer,
+    student_id SERIAL PRIMARY KEY,
     group_id integer,
     first_name character varying,
-    last_name character varying,
-    PRIMARY KEY (student_id)
+    last_name character varying
 );
 
 ALTER TABLE public.students
