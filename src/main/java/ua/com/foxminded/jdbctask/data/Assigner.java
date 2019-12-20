@@ -17,7 +17,7 @@ public class Assigner {
     
     private static Random random = new Random();
     
-    int[][] assignCoursedToStudents() {
+    int[][] assignCoursesToStudents() {
         Course course = new Course();      
         int[][] studentsCourses = new int[NUMBER_OF_STUDENTS][];   
         List<Integer> coursesAssigned = new ArrayList<>();      

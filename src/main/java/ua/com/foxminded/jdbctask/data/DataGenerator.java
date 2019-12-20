@@ -184,7 +184,7 @@ public class DataGenerator {
             stmt = conn.createStatement();
            
             Assigner assigner = new Assigner();
-            int[][] studentsCourses = assigner.assignCoursedToStudents();
+            int[][] studentsCourses = assigner.assignCoursesToStudents();
             
             for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
                 int[] coursesIds = studentsCourses[studentId];
