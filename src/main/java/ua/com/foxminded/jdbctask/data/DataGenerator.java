@@ -24,22 +24,26 @@ public class DataGenerator {
     static final String CREATE_COURSES_TABLE_PATH = "/create_courses_table.sql";
     static final String CREATE_STUDENTS_TABLE_PATH = "/create_students_table.sql";
     
-    static final String CREATE_STUDENTS_COURSES_TABLE = "CREATE TABLE student_courses (              \r\n" + 
-                                                        "    student_id integer REFERENCES students, \r\n" + 
-                                                        "    course_id integer REFERENCES courses,   \r\n" + 
-                                                        "    PRIMARY KEY (student_id, course_id)     \r\n" + 
+    static final String CREATE_STUDENTS_COURSES_TABLE = "CREATE TABLE student_courses (\n" + 
+                                                            "student_id integer REFERENCES students,\n" + 
+                                                            "course_id integer REFERENCES courses,\n" + 
+                                                            "PRIMARY KEY (student_id, course_id)\n" + 
                                                         ");";
     static final String DROP_GROUPS_TABLE = "DROP TABLE IF EXISTS groups;";
     static final String DROP_COURSES_TABLE = "DROP TABLE IF EXISTS courses;";
     static final String DROP_STUDENTS_TABLE = "DROP TABLE IF EXISTS students;";
     static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS student_courses";
 
-    public void generateData() throws SQLException, IOException, ClassNotFoundException {        
-        createTables();
-        insertGroups();
-        insertStudents();
-        insertCourses();
-        insertStudentsToCoursesRelations();
+    public void generateData() throws SQLException, IOException {
+        try {
+            createTables();
+            insertGroups();
+            insertStudents();
+            insertCourses();
+            insertStudentsToCoursesRelations();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
     
     public void createTables() throws SQLException, IOException, ClassNotFoundException {
