@@ -19,91 +19,75 @@ import ua.com.foxminded.jdbctask.university.Group;
 import ua.com.foxminded.jdbctask.university.Student;
 
 public class DataGenerator {
-
-//    static final String JDBC_DRIVER = "org.postgresql.Driver";
-//    static final String DB_URL = "jdbc:postgresql://localhost:5432/university";
-//
-//    static final String USER = "Sasha";
-//    static final String PASSWORD = "password";
     
-    String JDBC_DRIVER;
-    String DB_URL;
-    String USER;
-    String PASSWORD;
+    String jdbcDriver;
+    String dbUrl;
+    String user;
+    String password;
    
-    {
+    public void generateData() throws SQLException, IOException {
+        setConnectionProperties();
+        try (Connection connection = getConnection()){
+            createTables(connection);
+            insertGroups(connection);
+            insertStudents(connection);
+            insertCourses(connection);
+            insertStudentsToCoursesRelations(connection);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    void setConnectionProperties() {
         try (InputStream input = new FileInputStream("src/main/resources/config.properties")) {
             Properties properties = new Properties();
             properties.load(input);
-            JDBC_DRIVER = properties.getProperty("jdbcDriver");
-            DB_URL = properties.getProperty("dbUrl");
-            USER = properties.getProperty("dbUser");
-            PASSWORD = properties.getProperty("dbPassword");
+            jdbcDriver = properties.getProperty("jdbcDriver");
+            dbUrl = properties.getProperty("dbUrl");
+            user = properties.getProperty("dbUser");
+            password = properties.getProperty("dbPassword");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-   
-
-    public void generateData() throws SQLException, IOException {
+    
+    Connection getConnection() {
+        Connection connection = null;
         try {
-            createTables();
-            insertGroups();
-            insertStudents();
-            insertCourses();
-            insertStudentsToCoursesRelations();
-        } catch (ClassNotFoundException e) {
+            connection = DriverManager.getConnection(dbUrl, user, password);
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
+        } 
+        return connection;
     }
     
-    public void createTables() throws SQLException, IOException, ClassNotFoundException {
-        Connection conn = null;
-        Statement stmt = null;
-        try {
-            Class.forName(JDBC_DRIVER);
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            stmt = conn.createStatement();
+    public void createTables(Connection connection) throws SQLException, IOException, ClassNotFoundException {
+        try (Statement stmt = connection.createStatement()) {
+            Class.forName(jdbcDriver);
 
             stmt.executeUpdate(SqlQueryConstants.DROP_GROUPS_TABLE);
             String sql = fileToString(SqlQueryConstants.CREATE_GROUPS_TABLE_PATH);
             stmt.executeUpdate(sql);
-            
+
             stmt.executeUpdate(SqlQueryConstants.DROP_STUDENTS_TABLE);
             sql = fileToString(SqlQueryConstants.CREATE_STUDENTS_TABLE_PATH);
             stmt.executeUpdate(sql);
-            
+
             stmt.executeUpdate(SqlQueryConstants.DROP_COURSES_TABLE);
             sql = fileToString(SqlQueryConstants.CREATE_COURSES_TABLE_PATH);
             stmt.executeUpdate(sql);
-            
+
             stmt.executeUpdate(SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE);
             sql = fileToString(SqlQueryConstants.CREATE_STUDENTS_COURSES_TABLE_PATH);
             stmt.executeUpdate(sql);
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } finally {
-                    if (conn != null) {
-                        conn.close();
-                    }
-                }
-            }
         }
     }
     
-    public void insertGroups() throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        Statement stmt = null;
-        try {
-            Class.forName(JDBC_DRIVER);
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            stmt = conn.createStatement();
-            Group group = new Group();
-            
+    public void insertGroups(Connection connection) throws SQLException, ClassNotFoundException {
+        try (Statement stmt = connection.createStatement()) {
+            Group group = new Group();      
             for (int i = 0; i < Assigner.NUMBER_OF_GROUPS; i++) {
                 group.setRandomGroup();
                 int groupId = group.getId();
@@ -111,28 +95,12 @@ public class DataGenerator {
                 String sql = "INSERT INTO groups VALUES ('" + groupId + "', '" + groupName + "');";
                 stmt.executeUpdate(sql);
             }
-
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } finally {
-                    if (conn != null) {
-                        conn.close();
-                    }
-                }
-            }
-        }
+        } 
     }
   
-    public void insertStudents() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        Statement stmt = null;
-        try {
-            Class.forName(JDBC_DRIVER);
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            stmt = conn.createStatement();
-            
+    public void insertStudents(Connection connection) throws ClassNotFoundException, SQLException {
+        try (Statement stmt = connection.createStatement()){
+      
             Student student = new Student();
             Assigner dataGenerator = new Assigner();
             int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
@@ -150,56 +118,23 @@ public class DataGenerator {
                     stmt.executeUpdate(sql);
                 }
             }
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } finally {
-                    if (conn != null) {
-                        conn.close();
-                    }
-                }
-            }
         }
     }
     
-    void insertCourses() throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        Statement stmt = null;
-        try {
-            Class.forName(JDBC_DRIVER);
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            stmt = conn.createStatement();
-   
+    void insertCourses(Connection connection) throws SQLException, ClassNotFoundException {
+        try (Statement stmt = connection.createStatement()){ 
             int numberOfCourses = Course.COURSES.length;
             
             for(int courseId = 0; courseId < numberOfCourses; courseId++) {
                 String courseName = Course.COURSES[courseId];
                 String sql = "INSERT INTO courses (course_id, course_name) VALUES ('" + courseId + "', '" + courseName + "');";
                 stmt.executeUpdate(sql);
-            }
-            
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } finally {
-                    if (conn != null) {
-                        conn.close();
-                    }
-                }
-            }
+            } 
         }
     }
     
-    void insertStudentsToCoursesRelations() throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        Statement stmt = null;
-        try {
-            Class.forName(JDBC_DRIVER);
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            stmt = conn.createStatement();
-           
+    void insertStudentsToCoursesRelations(Connection connection) throws SQLException, ClassNotFoundException {
+        try (Statement stmt = connection.createStatement()){
             Assigner assigner = new Assigner();
             int[][] studentsCourses = assigner.assignCoursesToStudents();
             
@@ -210,16 +145,6 @@ public class DataGenerator {
                     int courseId = coursesIds[courseNumber];
                     String sql = "INSERT INTO students_courses VALUES ('" + studentId + "', '" + courseId + "');";
                     stmt.executeUpdate(sql);
-                }
-            }
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } finally {
-                    if (conn != null) {
-                        conn.close();
-                    }
                 }
             }
         }
