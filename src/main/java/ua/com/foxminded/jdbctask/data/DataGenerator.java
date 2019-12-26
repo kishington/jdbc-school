@@ -2,6 +2,7 @@ package ua.com.foxminded.jdbctask.data;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,41 +20,34 @@ import ua.com.foxminded.jdbctask.university.Student;
 
 public class DataGenerator {
 
-    static final String JDBC_DRIVER = "org.postgresql.Driver";
-    static final String DB_URL = "jdbc:postgresql://localhost:5432/university";
-
-    static final String USER = "Sasha";
-    static final String PASSWORD = "password";
+//    static final String JDBC_DRIVER = "org.postgresql.Driver";
+//    static final String DB_URL = "jdbc:postgresql://localhost:5432/university";
+//
+//    static final String USER = "Sasha";
+//    static final String PASSWORD = "password";
     
+    String JDBC_DRIVER;
+    String DB_URL;
+    String USER;
+    String PASSWORD;
+   
+    {
+        try (InputStream input = new FileInputStream("src/main/resources/config.properties")) {
+            Properties properties = new Properties();
+            properties.load(input);
+            JDBC_DRIVER = properties.getProperty("jdbcDriver");
+            DB_URL = properties.getProperty("dbUrl");
+            USER = properties.getProperty("dbUser");
+            PASSWORD = properties.getProperty("dbPassword");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
    
 
     public void generateData() throws SQLException, IOException {
-//        try (OutputStream output = new FileOutputStream("src/main/resources/config.properties")) {
-//            Properties prop = new Properties();
-//            prop.setProperty("jdbcDriver", "org.postgresql.Driver");
-//            prop.setProperty("dbUrl", "jdbc:postgresql://localhost:5432/university");
-//            prop.setProperty("dbUser", "Sasha");
-//            prop.setProperty("dbPassword", "password");
-//            prop.store(output, null);
-//            System.out.println(prop);
-//        } catch (IOException io) {
-//            io.printStackTrace();
-//        }
-        
-        try (InputStream input = new FileInputStream("src/main/resources/config.properties")) {
-
-            Properties prop = new Properties();
-            prop.load(input);
-
-            System.out.println(prop.getProperty("jdbcDriver"));
-            System.out.println(prop.getProperty("dbUrl"));
-            System.out.println(prop.getProperty("dbUser"));
-            System.out.println(prop.getProperty("dbPassword"));
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-     
         try {
             createTables();
             insertGroups();
