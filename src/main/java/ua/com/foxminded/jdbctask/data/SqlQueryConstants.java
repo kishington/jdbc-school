@@ -1,6 +1,16 @@
 package ua.com.foxminded.jdbctask.data;
 
 public class SqlQueryConstants {
+    static final String CREATE_GROUPS_TABLE_PATH = "/create_groups_table.sql";
+    static final String CREATE_COURSES_TABLE_PATH = "/create_courses_table.sql";
+    static final String CREATE_STUDENTS_TABLE_PATH = "/create_students_table.sql";
+    static final String CREATE_STUDENTS_COURSES_TABLE_PATH = "/create_students_courses_table.sql";
+    
+    static final String DROP_GROUPS_TABLE = "DROP TABLE IF EXISTS groups CASCADE;";
+    static final String DROP_COURSES_TABLE = "DROP TABLE IF EXISTS courses CASCADE;";
+    static final String DROP_STUDENTS_TABLE = "DROP TABLE IF EXISTS students CASCADE;";
+    static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS students_courses CASCADE";
+    
     String GROUPS_STUDENT_COUNT_NOT_MORE_THAN = 
             "SELECT\n" + 
             "   group_id,\n" + 

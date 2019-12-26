@@ -1,12 +1,17 @@
 package ua.com.foxminded.jdbctask.data;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 import ua.com.foxminded.jdbctask.university.Course;
 import ua.com.foxminded.jdbctask.university.Group;
@@ -20,22 +25,35 @@ public class DataGenerator {
     static final String USER = "Sasha";
     static final String PASSWORD = "password";
     
-    static final String CREATE_GROUPS_TABLE_PATH = "/create_groups_table.sql";
-    static final String CREATE_COURSES_TABLE_PATH = "/create_courses_table.sql";
-    static final String CREATE_STUDENTS_TABLE_PATH = "/create_students_table.sql";
-    static final String CREATE_STUDENTS_COURSES_TABLE_PATH = "/create_students_courses_table.sql";
-    
-    static final String CREATE_STUDENTS_COURSES_TABLE = "CREATE TABLE students_courses (\n" + 
-                                                            "student_id integer REFERENCES students,\n" + 
-                                                            "course_id integer REFERENCES courses,\n" + 
-                                                            "PRIMARY KEY (student_id, course_id)\n" + 
-                                                        ");";
-    static final String DROP_GROUPS_TABLE = "DROP TABLE IF EXISTS groups;";
-    static final String DROP_COURSES_TABLE = "DROP TABLE IF EXISTS courses;";
-    static final String DROP_STUDENTS_TABLE = "DROP TABLE IF EXISTS students;";
-    static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS students_courses";
+   
 
     public void generateData() throws SQLException, IOException {
+//        try (OutputStream output = new FileOutputStream("src/main/resources/config.properties")) {
+//            Properties prop = new Properties();
+//            prop.setProperty("jdbcDriver", "org.postgresql.Driver");
+//            prop.setProperty("dbUrl", "jdbc:postgresql://localhost:5432/university");
+//            prop.setProperty("dbUser", "Sasha");
+//            prop.setProperty("dbPassword", "password");
+//            prop.store(output, null);
+//            System.out.println(prop);
+//        } catch (IOException io) {
+//            io.printStackTrace();
+//        }
+        
+        try (InputStream input = new FileInputStream("src/main/resources/config.properties")) {
+
+            Properties prop = new Properties();
+            prop.load(input);
+
+            System.out.println(prop.getProperty("jdbcDriver"));
+            System.out.println(prop.getProperty("dbUrl"));
+            System.out.println(prop.getProperty("dbUser"));
+            System.out.println(prop.getProperty("dbPassword"));
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+     
         try {
             createTables();
             insertGroups();
@@ -54,22 +72,21 @@ public class DataGenerator {
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             stmt = conn.createStatement();
-            
-            stmt.executeUpdate(DROP_STUDENTS_COURSES_TABLE);
 
-            stmt.executeUpdate(DROP_GROUPS_TABLE);
-            String sql = fileToString(CREATE_GROUPS_TABLE_PATH);
+            stmt.executeUpdate(SqlQueryConstants.DROP_GROUPS_TABLE);
+            String sql = fileToString(SqlQueryConstants.CREATE_GROUPS_TABLE_PATH);
             stmt.executeUpdate(sql);
             
-            stmt.executeUpdate(DROP_STUDENTS_TABLE);
-            sql = fileToString(CREATE_STUDENTS_TABLE_PATH);
+            stmt.executeUpdate(SqlQueryConstants.DROP_STUDENTS_TABLE);
+            sql = fileToString(SqlQueryConstants.CREATE_STUDENTS_TABLE_PATH);
             stmt.executeUpdate(sql);
             
-            stmt.executeUpdate(DROP_COURSES_TABLE);
-            sql = fileToString(CREATE_COURSES_TABLE_PATH);
+            stmt.executeUpdate(SqlQueryConstants.DROP_COURSES_TABLE);
+            sql = fileToString(SqlQueryConstants.CREATE_COURSES_TABLE_PATH);
             stmt.executeUpdate(sql);
             
-            sql = fileToString(CREATE_STUDENTS_COURSES_TABLE_PATH);
+            stmt.executeUpdate(SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE);
+            sql = fileToString(SqlQueryConstants.CREATE_STUDENTS_COURSES_TABLE_PATH);
             stmt.executeUpdate(sql);
         } finally {
             if (stmt != null) {
