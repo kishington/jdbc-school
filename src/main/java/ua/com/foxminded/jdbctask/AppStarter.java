@@ -7,7 +7,7 @@ import ua.com.foxminded.jdbctask.data.DataGenerator;
 
 public class AppStarter {
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
+    public static void main(String[] args) throws SQLException, IOException {
         DataGenerator dataGenerator = new DataGenerator();
             dataGenerator.generateData();
     }

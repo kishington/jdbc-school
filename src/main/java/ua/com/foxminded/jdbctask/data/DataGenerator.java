@@ -23,6 +23,7 @@ public class DataGenerator {
     static final String CREATE_GROUPS_TABLE_PATH = "/create_groups_table.sql";
     static final String CREATE_COURSES_TABLE_PATH = "/create_courses_table.sql";
     static final String CREATE_STUDENTS_TABLE_PATH = "/create_students_table.sql";
+    static final String CREATE_STUDENTS_COURSES_TABLE_PATH = "/create_students_courses_table.sql";
     
     static final String CREATE_STUDENTS_COURSES_TABLE = "CREATE TABLE students_courses (\n" + 
                                                             "student_id integer REFERENCES students,\n" + 
@@ -68,7 +69,9 @@ public class DataGenerator {
             sql = fileToString(CREATE_COURSES_TABLE_PATH);
             stmt.executeUpdate(sql);
             
-            stmt.executeUpdate(CREATE_STUDENTS_COURSES_TABLE);
+            sql = fileToString(CREATE_STUDENTS_COURSES_TABLE_PATH);
+            stmt.executeUpdate(sql);
+            //stmt.executeUpdate(CREATE_STUDENTS_COURSES_TABLE);
         } finally {
             if (stmt != null) {
                 try {
