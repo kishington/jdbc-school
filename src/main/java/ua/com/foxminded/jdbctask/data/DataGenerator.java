@@ -71,7 +71,6 @@ public class DataGenerator {
             
             sql = fileToString(CREATE_STUDENTS_COURSES_TABLE_PATH);
             stmt.executeUpdate(sql);
-            //stmt.executeUpdate(CREATE_STUDENTS_COURSES_TABLE);
         } finally {
             if (stmt != null) {
                 try {
