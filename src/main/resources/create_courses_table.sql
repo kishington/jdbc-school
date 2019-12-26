@@ -5,7 +5,4 @@ CREATE TABLE IF NOT EXISTS public.courses
     course_description character varying,
     PRIMARY KEY (course_id)
 );
-
-ALTER TABLE public.courses
-    OWNER to "Sasha";
 	

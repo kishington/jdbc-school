@@ -24,7 +24,7 @@ public class DataGenerator {
     static final String CREATE_COURSES_TABLE_PATH = "/create_courses_table.sql";
     static final String CREATE_STUDENTS_TABLE_PATH = "/create_students_table.sql";
     
-    static final String CREATE_STUDENTS_COURSES_TABLE = "CREATE TABLE student_courses (\n" + 
+    static final String CREATE_STUDENTS_COURSES_TABLE = "CREATE TABLE students_courses (\n" + 
                                                             "student_id integer REFERENCES students,\n" + 
                                                             "course_id integer REFERENCES courses,\n" + 
                                                             "PRIMARY KEY (student_id, course_id)\n" + 
@@ -32,7 +32,7 @@ public class DataGenerator {
     static final String DROP_GROUPS_TABLE = "DROP TABLE IF EXISTS groups;";
     static final String DROP_COURSES_TABLE = "DROP TABLE IF EXISTS courses;";
     static final String DROP_STUDENTS_TABLE = "DROP TABLE IF EXISTS students;";
-    static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS student_courses";
+    static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS students_courses";
 
     public void generateData() throws SQLException, IOException {
         try {
@@ -195,7 +195,7 @@ public class DataGenerator {
                 int numberOfCourses = coursesIds.length;
                 for(int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
                     int courseId = coursesIds[courseNumber];
-                    String sql = "INSERT INTO student_courses VALUES ('" + studentId + "', '" + courseId + "');";
+                    String sql = "INSERT INTO students_courses VALUES ('" + studentId + "', '" + courseId + "');";
                     stmt.executeUpdate(sql);
                 }
             }
