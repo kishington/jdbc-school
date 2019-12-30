@@ -95,10 +95,10 @@ public class Querier {
     }
 
     void addNewStudent(Connection connection, String firstName, String lastName) throws SQLException {
-        try (PreparedStatement insterNewStudent = connection.prepareStatement(SqlQueryConstants.INSERT_STUDENT)) {
-            insterNewStudent.setString(1, firstName);
-            insterNewStudent.setString(2, lastName);
-            insterNewStudent.executeUpdate();
+        try (PreparedStatement insertNewStudent = connection.prepareStatement(SqlQueryConstants.INSERT_STUDENT)) {
+            insertNewStudent.setString(1, firstName);
+            insertNewStudent.setString(2, lastName);
+            insertNewStudent.executeUpdate();
         }
     }
 

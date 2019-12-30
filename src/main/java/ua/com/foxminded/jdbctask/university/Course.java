@@ -2,14 +2,11 @@ package ua.com.foxminded.jdbctask.university;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Course {
     private int id;
     private String name;
     private String description;
-    
-    private static Random random = new Random();
 
     public static List<String> courses = new ArrayList<>();
     static {

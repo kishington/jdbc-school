@@ -86,65 +86,73 @@ public class DataGenerator {
     }
     
     public void insertGroups(Connection connection) throws SQLException {
-        try (Statement stmt = connection.createStatement()) {
-            Group group = new Group();      
+        Group group = new Group();
+        try (PreparedStatement insertGroup = connection.prepareStatement(SqlQueryConstants.INSERT_GROUP)) {
             for (int groupId = 0; groupId < Assigner.getNumberOfGroups(); groupId++) {
                 setRandomGroupName(group);
                 String groupName = group.getName();
-                String sql = "INSERT INTO groups VALUES ('" + groupId + "', '" + groupName + "');";
-                stmt.executeUpdate(sql);
+                insertGroup.setInt(1, groupId);
+                insertGroup.setString(2, groupName);
+                insertGroup.executeUpdate();
             }
-        } 
+        }
     }
   
     public void insertStudents(Connection connection) throws SQLException {
-        try (Statement stmt = connection.createStatement()){
-      
-            Student student = new Student();
-            Assigner dataGenerator = new Assigner();
-            int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
-            for(int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
+        Student student = new Student();
+        Assigner dataGenerator = new Assigner();
+        int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
+        try (PreparedStatement insertAssignedStudent = connection
+                .prepareStatement(SqlQueryConstants.INSERT_ASSIGNED_STUDENT);
+                PreparedStatement insertNotAssignedStudent = connection
+                        .prepareStatement(SqlQueryConstants.INSERT_NOT_ASSIGNED_STUDENT)) {
+            for (int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
                 setRandomFullName(student);
                 String firstName = student.getFirstName();
                 String lastName = student.getLastName();
                 boolean studentAssignedToGroup = studentsToGroupsDistribution[studentId][0] == Assigner.STUDENT_ASSIGNED;
                 if (studentAssignedToGroup) {
                     int groupId = studentsToGroupsDistribution[studentId][1];
-                    String sql = "INSERT INTO students VALUES ('" + studentId + "', '" + groupId + "', '" + firstName + "', '" + lastName + "');";
-                    stmt.executeUpdate(sql);
+                    insertAssignedStudent.setInt(1, studentId);
+                    insertAssignedStudent.setInt(2, groupId);
+                    insertAssignedStudent.setString(3, firstName);
+                    insertAssignedStudent.setString(4, lastName);
+                    insertAssignedStudent.executeUpdate();
                 } else {
-                    String sql = "INSERT INTO students (student_id, first_name, last_name) VALUES ('" + studentId + "', '" + firstName + "', '" + lastName + "');";
-                    stmt.executeUpdate(sql);
+                    insertNotAssignedStudent.setInt(1, studentId);
+                    insertNotAssignedStudent.setString(2, firstName);
+                    insertNotAssignedStudent.setString(3, lastName);
+                    insertNotAssignedStudent.executeUpdate();
                 }
             }
         }
     }
     
     void insertCourses(Connection connection) throws SQLException {
-        try (Statement stmt = connection.createStatement()){ 
+        try (PreparedStatement insertCourse = connection.prepareStatement(SqlQueryConstants.INSERT_COURSE)) {
             int numberOfCourses = Course.courses.size();
-            
-            for(int courseId = 0; courseId < numberOfCourses; courseId++) {
+            for (int courseId = 0; courseId < numberOfCourses; courseId++) {
                 String courseName = Course.courses.get(courseId);
-                String sql = "INSERT INTO courses (course_id, course_name) VALUES ('" + courseId + "', '" + courseName + "');";
-                stmt.executeUpdate(sql);
-            } 
+                insertCourse.setInt(1, courseId);
+                insertCourse.setString(2, courseName);
+                insertCourse.executeUpdate();
+            }
         }
-    }
-    
+    } 
     
     void insertStudentsToCoursesRelations(Connection connection) throws SQLException {
-        try (Statement stmt = connection.createStatement()){
-            Assigner assigner = new Assigner();
-            int[][] studentsCourses = assigner.assignCoursesToStudents();
-            
+        Assigner assigner = new Assigner();
+        int[][] studentsCourses = assigner.assignCoursesToStudents();
+        try (PreparedStatement insertStudentCourseRelation = connection
+                .prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
             for (int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
                 int[] coursesIds = studentsCourses[studentId];
                 int numberOfCourses = coursesIds.length;
-                for(int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
+                insertStudentCourseRelation.setInt(1, studentId);
+                for (int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
                     int courseId = coursesIds[courseNumber];
-                    String sql = "INSERT INTO students_courses VALUES ('" + studentId + "', '" + courseId + "');";
-                    stmt.executeUpdate(sql);
+                    insertStudentCourseRelation.setInt(2, courseId);
+                    insertStudentCourseRelation.executeUpdate();
                 }
             }
         }
