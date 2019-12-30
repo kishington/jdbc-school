@@ -5,20 +5,21 @@ import java.util.List;
 import java.util.Random;
 
 import ua.com.foxminded.jdbctask.university.Course;
+import ua.com.foxminded.jdbctask.university.Group;
+import ua.com.foxminded.jdbctask.university.Student;
 
 public class Assigner {
     private static final int GROUP_SIZE_LOWER_LIMIT = 10;
     private static final int GROUP_SIZE_UPPER_LIMIT = 30;
-    static final int NUMBER_OF_GROUPS = 10;
-    static final int NUMBER_OF_STUDENTS = 200;
+    private static final int NUMBER_OF_GROUPS = 10;
+    private static final int NUMBER_OF_STUDENTS = 200;
+    private static final int MIN_NUMBER_OF_COURSES = 1;
+    private static final int MAX_NUMBER_OF_COURSES = 3;
     static final int STUDENT_ASSIGNED = 1;
-    static final int MIN_NUMBER_OF_COURSES = 1;
-    static final int MAX_NUMBER_OF_COURSES = 3;
     
     private static Random random = new Random();
     
-    int[][] assignCoursesToStudents() {
-        Course course = new Course();      
+    int[][] assignCoursesToStudents() {     
         int[][] studentsCourses = new int[NUMBER_OF_STUDENTS][];   
         List<Integer> coursesAssigned = new ArrayList<>();      
         for (int studentId = 0; studentId < NUMBER_OF_STUDENTS; studentId++) {
@@ -28,9 +29,7 @@ public class Assigner {
             for(int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
                 int courseId;
                 do {
-                    setRandomCourse(course);
-                    //course.setRandomCourse();
-                    courseId = course.getId();
+                    courseId = random.nextInt(Course.getTotalNumberOfAvailableCourses());
                 } while(coursesAssigned.contains(courseId));
                 coursesAssigned.add(courseId);
                 coursesIds[courseNumber] = courseId;
@@ -83,10 +82,43 @@ public class Assigner {
         return permutation;
     }
     
-    public void setRandomCourse(Course course) {
-        int id = random.nextInt(course.getNumberOfCourses());
-        course.setId(id);
-        course.setName(Course.courses.get(id));
+    public void setStudentRandomFullName(Student student) {
+        int index = random.nextInt(Student.FIRST_NAMES.length);
+        String firstName = Student.FIRST_NAMES[index];
+        student.setFirstName(firstName); 
+        
+        index = random.nextInt(Student.FIRST_NAMES.length);
+        String lastName = Student.LAST_NAMES[index];
+        student.setFirstName(lastName); 
     }
-
+    
+    public void setRandomGroupName(Group group) {
+        final String letters = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder groupName = new StringBuilder();
+        
+        int index = random.nextInt(letters.length());
+        char randomChar = letters.charAt(index);
+        groupName.append(randomChar);        
+        index = random.nextInt(letters.length());
+        randomChar = letters.charAt(index);
+        groupName.append(randomChar);
+       
+        groupName.append('-');
+        
+        int randomDigit = random.nextInt(10);
+        groupName.append(randomDigit);
+        randomDigit = random.nextInt(10);
+        groupName.append(randomDigit);
+        
+        String groupNameString = groupName.toString();
+        group.setName(groupNameString);
+    }
+    
+    public static int getNumberOfGroups() {
+        return NUMBER_OF_GROUPS;
+    }
+    
+    public static int getNumberOfStudents() {
+        return NUMBER_OF_STUDENTS;
+    }
 }

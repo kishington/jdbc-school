@@ -76,5 +76,7 @@ public class SqlQueryConstants {
     static final String REMOVE_STUDENT_FROM_COURSE = 
             "DELETE FROM students_courses\n" +
             "WHERE student_id = ? AND course_id = ?;";
+    
+    static final String INSERT_GROUP =  "INSERT INTO groups VALUES (?, ?);";
 
 }

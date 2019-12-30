@@ -88,9 +88,8 @@ public class DataGenerator {
     public void insertGroups(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             Group group = new Group();      
-            for (int i = 0; i < Assigner.NUMBER_OF_GROUPS; i++) {
-                group.setRandomGroup();
-                int groupId = group.getId();
+            for (int groupId = 0; groupId < Assigner.getNumberOfGroups(); groupId++) {
+                setRandomGroupName(group);
                 String groupName = group.getName();
                 String sql = "INSERT INTO groups VALUES ('" + groupId + "', '" + groupName + "');";
                 stmt.executeUpdate(sql);
@@ -104,8 +103,8 @@ public class DataGenerator {
             Student student = new Student();
             Assigner dataGenerator = new Assigner();
             int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
-            for(int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
-                student.setRandomFullName();
+            for(int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
+                setRandomFullName(student);
                 String firstName = student.getFirstName();
                 String lastName = student.getLastName();
                 boolean studentAssignedToGroup = studentsToGroupsDistribution[studentId][0] == Assigner.STUDENT_ASSIGNED;
@@ -139,7 +138,7 @@ public class DataGenerator {
             Assigner assigner = new Assigner();
             int[][] studentsCourses = assigner.assignCoursesToStudents();
             
-            for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
+            for (int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
                 int[] coursesIds = studentsCourses[studentId];
                 int numberOfCourses = coursesIds.length;
                 for(int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
@@ -158,4 +157,37 @@ public class DataGenerator {
         } 
         return output.toString();
     }
+    
+    public void setRandomFullName(Student student) {
+        int index = random.nextInt(Student.FIRST_NAMES.length);
+        String firstName = Student.FIRST_NAMES[index];
+        student.setFirstName(firstName); 
+        
+        index = random.nextInt(Student.LAST_NAMES.length);
+        String lastName = Student.LAST_NAMES[index];
+        student.setLastName(lastName); 
+    }
+    
+    public void setRandomGroupName(Group group) {
+        final String letters = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder groupName = new StringBuilder();
+        
+        int index = random.nextInt(letters.length());
+        char randomChar = letters.charAt(index);
+        groupName.append(randomChar);        
+        index = random.nextInt(letters.length());
+        randomChar = letters.charAt(index);
+        groupName.append(randomChar);
+       
+        groupName.append('-');
+        
+        int randomDigit = random.nextInt(10);
+        groupName.append(randomDigit);
+        randomDigit = random.nextInt(10);
+        groupName.append(randomDigit);
+        
+        String groupNameString = groupName.toString();
+        group.setName(groupNameString);
+    }
+
 }

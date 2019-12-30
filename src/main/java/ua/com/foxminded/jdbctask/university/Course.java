@@ -45,7 +45,7 @@ public class Course {
         this.description = description;
     }
     
-    public int getNumberOfCourses() {
+    public static int getTotalNumberOfAvailableCourses() {
         return courses.size();
     }
 }
