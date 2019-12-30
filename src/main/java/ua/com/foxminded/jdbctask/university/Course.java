@@ -1,5 +1,7 @@
 package ua.com.foxminded.jdbctask.university;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Course {
@@ -8,10 +10,21 @@ public class Course {
     private String description;
     
     private static Random random = new Random();
-    
-    public static final String[] COURSES = { "Maths", "Biology", "Zoology", "Botany", "Physics", "Chemistry",
-            "Astronomy", "Economics", "Physiology", "Econometrics" };
 
+    public static List<String> courses = new ArrayList<>();
+    static {
+        courses.add("Maths");
+        courses.add("Biology");
+        courses.add("Zoology");
+        courses.add("Botany");
+        courses.add("Physics");
+        courses.add("Chemistry");
+        courses.add("Astronomy");
+        courses.add("Economics");
+        courses.add("Physiology");
+        courses.add("Econometrics");
+    }
+    
     public int getId() {
         return id;
     }
@@ -24,10 +37,11 @@ public class Course {
     public void setName(String name) {
         this.name = name;
     }
+    
     public void setRandomCourse() {
-        int id = random.nextInt(COURSES.length);
+        int id = random.nextInt(courses.size());
         this.id = id;
-        this.name = COURSES[id];
+        this.name = courses.get(id);
     }
     
     public String getDescription() {

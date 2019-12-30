@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ua.com.foxminded.jdbctask.university.Course;
+
 public class Querier {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
@@ -28,18 +30,30 @@ public class Querier {
             
             List<Integer> courses = q.getStudentsCourses(connection, 0);
             System.out.println(courses);
+            
+            q.assignStudentToCourse(connection, 2, "Chemistry");
         }
     }
     
     void assignStudentToCourse(Connection connection, int studentId, String courseName) throws SQLException {
-        int courseId = getCourseId(connection, courseName);
-
-        List<Integer> studentCourses = getStudentsCourses(connection, studentId);
-        if (studentCourses.contains(courseId)) {
-            System.out.println("Student already assigned to this course");
+        boolean courseAvailable = Course.courses.contains(courseName);
+        if(!courseAvailable) {
+            System.out.println("No such course available.");
         } else {
-            
+            int courseId = getCourseId(connection, courseName);
+            List<Integer> studentCourses = getStudentsCourses(connection, studentId);
+            if (studentCourses.contains(courseId)) {
+                System.out.println("Student already assigned to this course");
+            } else {
+                try (PreparedStatement studentToCourseAssignment = connection.prepareStatement(SqlQueryConstants.ASSIGN_STUDENT_TO_COURSE)) {
+                    studentToCourseAssignment.setInt(1, studentId);
+                    studentToCourseAssignment.setInt(2, courseId);
+                    studentToCourseAssignment.executeUpdate();
+                }
+                
+            }
         }
+
     }    
     
     List<Integer> getStudentsCourses(Connection connection, int studentId) throws SQLException {

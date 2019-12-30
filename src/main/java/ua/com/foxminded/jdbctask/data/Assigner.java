@@ -22,7 +22,7 @@ public class Assigner {
         int[][] studentsCourses = new int[NUMBER_OF_STUDENTS][];   
         List<Integer> coursesAssigned = new ArrayList<>();      
         for (int studentId = 0; studentId < NUMBER_OF_STUDENTS; studentId++) {
-            int numberOfCourses = MIN_NUMBER_OF_COURSES + random.nextInt(MAX_NUMBER_OF_COURSES - MIN_NUMBER_OF_COURSES +1);
+            int numberOfCourses = MIN_NUMBER_OF_COURSES + random.nextInt(MAX_NUMBER_OF_COURSES - MIN_NUMBER_OF_COURSES + 1);
             int[] coursesIds = new int[numberOfCourses];
             coursesAssigned.clear();
             for(int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {

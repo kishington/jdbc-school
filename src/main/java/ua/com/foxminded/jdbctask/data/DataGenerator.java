@@ -120,15 +120,16 @@ public class DataGenerator {
     
     void insertCourses(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()){ 
-            int numberOfCourses = Course.COURSES.length;
+            int numberOfCourses = Course.courses.size();
             
             for(int courseId = 0; courseId < numberOfCourses; courseId++) {
-                String courseName = Course.COURSES[courseId];
+                String courseName = Course.courses.get(courseId);
                 String sql = "INSERT INTO courses (course_id, course_name) VALUES ('" + courseId + "', '" + courseName + "');";
                 stmt.executeUpdate(sql);
             } 
         }
     }
+    
     
     void insertStudentsToCoursesRelations(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()){
