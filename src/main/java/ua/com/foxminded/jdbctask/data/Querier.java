@@ -28,12 +28,36 @@ public class Querier {
             int studentId = 200;
             q.deleteStudent(connection, studentId);
             
-            List<Integer> courses = q.getStudentsCourses(connection, 0);
+            List<Integer> courses = q.getStudentCourses(connection, 0);
             System.out.println(courses);
             
             q.assignStudentToCourse(connection, 2, "Chemistry");
+            
+            q.removeStudentFromCourse(connection, 1, "Botany");
         }
     }
+    
+    void removeStudentFromCourse(Connection connection, int studentId, String courseName) throws SQLException {
+        List<Integer> studentCourses = getStudentCourses(connection, studentId);
+        boolean courseAvailable = Course.courses.contains(courseName);
+        if (!courseAvailable) {
+            System.out.println("No such course is available.");
+        } else {
+            int courseId = getCourseId(connection, courseName);
+            boolean isStudentAssignedToCourse = studentCourses.contains(courseId);
+            if (!isStudentAssignedToCourse) {
+                System.out.println("Student is not assigned to this course.");
+            } else {
+                try (PreparedStatement removalOfStudentFromCourse = connection
+                        .prepareStatement(SqlQueryConstants.REMOVE_STUDENT_FROM_COURSE)) {
+                    removalOfStudentFromCourse.setInt(1, studentId);
+                    removalOfStudentFromCourse.setInt(2, courseId);
+                    removalOfStudentFromCourse.executeUpdate();
+                }
+            }
+        }
+    }
+    
     
     void assignStudentToCourse(Connection connection, int studentId, String courseName) throws SQLException {
         boolean courseAvailable = Course.courses.contains(courseName);
@@ -41,9 +65,9 @@ public class Querier {
             System.out.println("No such course available.");
         } else {
             int courseId = getCourseId(connection, courseName);
-            List<Integer> studentCourses = getStudentsCourses(connection, studentId);
+            List<Integer> studentCourses = getStudentCourses(connection, studentId);
             if (studentCourses.contains(courseId)) {
-                System.out.println("Student already assigned to this course");
+                System.out.println("Student is already assigned to this course.");
             } else {
                 try (PreparedStatement studentToCourseAssignment = connection.prepareStatement(SqlQueryConstants.ASSIGN_STUDENT_TO_COURSE)) {
                     studentToCourseAssignment.setInt(1, studentId);
@@ -56,7 +80,7 @@ public class Querier {
 
     }    
     
-    List<Integer> getStudentsCourses(Connection connection, int studentId) throws SQLException {
+    List<Integer> getStudentCourses(Connection connection, int studentId) throws SQLException {
         List<Integer> courses = new ArrayList<>();
         try (PreparedStatement selectStudentsCourses = connection.prepareStatement(SqlQueryConstants.SELECT_STUDENTS_COURSES)) {
             selectStudentsCourses.setInt(1, studentId);
