@@ -1,5 +1,6 @@
 package ua.com.foxminded.jdbctask.data;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,12 +11,14 @@ import java.util.List;
 import ua.com.foxminded.jdbctask.university.Course;
 
 public class Querier {
+    
+    private static final String COURSE_NOT_AVAILABLE = "No such course is available.";
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
         DataGenerator dg = new DataGenerator();
         Querier q = new Querier();
         try (Connection connection = dg.getConnection()) {
-
+            
             int n = 20;
             q.getGroupsStudentCountLessThan(connection, n);
 
@@ -41,7 +44,7 @@ public class Querier {
         List<Integer> studentCourses = getStudentCourses(connection, studentId);
         boolean courseAvailable = Course.courses.contains(courseName);
         if (!courseAvailable) {
-            System.out.println("No such course is available.");
+            System.out.println(COURSE_NOT_AVAILABLE);
         } else {
             int courseId = getCourseId(connection, courseName);
             boolean isStudentAssignedToCourse = studentCourses.contains(courseId);
@@ -62,22 +65,20 @@ public class Querier {
     void assignStudentToCourse(Connection connection, int studentId, String courseName) throws SQLException {
         boolean courseAvailable = Course.courses.contains(courseName);
         if(!courseAvailable) {
-            System.out.println("No such course available.");
+            System.out.println(COURSE_NOT_AVAILABLE);
         } else {
             int courseId = getCourseId(connection, courseName);
             List<Integer> studentCourses = getStudentCourses(connection, studentId);
             if (studentCourses.contains(courseId)) {
                 System.out.println("Student is already assigned to this course.");
             } else {
-                try (PreparedStatement studentToCourseAssignment = connection.prepareStatement(SqlQueryConstants.ASSIGN_STUDENT_TO_COURSE)) {
-                    studentToCourseAssignment.setInt(1, studentId);
-                    studentToCourseAssignment.setInt(2, courseId);
-                    studentToCourseAssignment.executeUpdate();
-                }
-                
+                try (PreparedStatement insertStudentCourseRelation = connection.prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
+                    insertStudentCourseRelation.setInt(1, studentId);
+                    insertStudentCourseRelation.setInt(2, courseId);
+                    insertStudentCourseRelation.executeUpdate();
+                }        
             }
         }
-
     }    
     
     List<Integer> getStudentCourses(Connection connection, int studentId) throws SQLException {
@@ -111,7 +112,7 @@ public class Querier {
 
     void getGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
         try (PreparedStatement groupsStudentCountLessThan = connection
-                .prepareStatement(SqlQueryConstants.GROUPS_STUDENT_COUNT_NOT_MORE_THAN)) {
+                .prepareStatement(SqlQueryConstants.SELECT_GROUPS_STUDENT_COUNT_NOT_MORE_THAN)) {
             groupsStudentCountLessThan.setInt(1, n);
             try (ResultSet rs = groupsStudentCountLessThan.executeQuery()) {
                 while (rs.next()) {
@@ -146,8 +147,8 @@ public class Querier {
             selectCourseId.setString(1, courseName);
             try (ResultSet rs = selectCourseId.executeQuery()) {
                 rs.next();
-                int course_id = rs.getInt(1);
-                return course_id;
+                int courseId = rs.getInt(1);
+                return courseId;
             }
         }
     }

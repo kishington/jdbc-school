@@ -2,16 +2,12 @@ package ua.com.foxminded.jdbctask.data;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -22,70 +18,55 @@ import ua.com.foxminded.jdbctask.university.Group;
 import ua.com.foxminded.jdbctask.university.Student;
 
 public class DataGenerator {
-    
-    private static Random random = new Random();
+    private static final String DB_PROPERTIES_PATH = "src/main/resources/config.properties";
+    private static final Random random = new Random();
    
     public void generateData() throws SQLException, IOException {
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
             createTables(connection);
             insertGroups(connection);
             insertStudents(connection);
             insertCourses(connection);
             insertStudentsToCoursesRelations(connection);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
-    
-    Connection getConnection() throws ClassNotFoundException {
+
+    Connection getConnection() throws IOException, SQLException {
         String jdbcDriver = null;
         String dbUrl = null;
         String user = null;
         String password = null;
-        try (InputStream input = new FileInputStream("src/main/resources/config.properties")) {
+        try (InputStream input = new FileInputStream(DB_PROPERTIES_PATH)) {
             Properties properties = new Properties();
             properties.load(input);
             jdbcDriver = properties.getProperty("jdbcDriver");
             dbUrl = properties.getProperty("dbUrl");
             user = properties.getProperty("dbUser");
             password = properties.getProperty("dbPassword");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         Connection connection = null;
         try {
             Class.forName(jdbcDriver);
-            connection = DriverManager.getConnection(dbUrl, user, password);
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } 
+        }
+        connection = DriverManager.getConnection(dbUrl, user, password);
         return connection;
     }
     
-    public void createTables(Connection connection) throws SQLException, IOException {
+    private void createTables(Connection connection) throws SQLException, IOException {
         try (Statement stmt = connection.createStatement()) {
-
-            stmt.executeUpdate(SqlQueryConstants.DROP_GROUPS_TABLE);
-            String sql = fileToString(SqlQueryConstants.CREATE_GROUPS_TABLE_PATH);
-            stmt.executeUpdate(sql);
-
-            stmt.executeUpdate(SqlQueryConstants.DROP_STUDENTS_TABLE);
-            sql = fileToString(SqlQueryConstants.CREATE_STUDENTS_TABLE_PATH);
-            stmt.executeUpdate(sql);
-
-            stmt.executeUpdate(SqlQueryConstants.DROP_COURSES_TABLE);
-            sql = fileToString(SqlQueryConstants.CREATE_COURSES_TABLE_PATH);
-            stmt.executeUpdate(sql);
-
-            stmt.executeUpdate(SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE);
-            sql = fileToString(SqlQueryConstants.CREATE_STUDENTS_COURSES_TABLE_PATH);
-            stmt.executeUpdate(sql);
+            String dropAllTables = SqlQueryConstants.DROP_GROUPS_TABLE + SqlQueryConstants.DROP_STUDENTS_TABLE
+                    + SqlQueryConstants.DROP_COURSES_TABLE + SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE;
+            stmt.executeUpdate(dropAllTables);
+            for (int i = 0; i < SqlQueryConstants.NUMBER_OF_TABLES; i++) {
+                String createTable = fileToString(SqlQueryConstants.TABLES_TO_CREATE_PATHS[i]);
+                stmt.executeUpdate(createTable);
+            }
         }
     }
     
-    public void insertGroups(Connection connection) throws SQLException {
+    private void insertGroups(Connection connection) throws SQLException {
         Group group = new Group();
         try (PreparedStatement insertGroup = connection.prepareStatement(SqlQueryConstants.INSERT_GROUP)) {
             for (int groupId = 0; groupId < Assigner.getNumberOfGroups(); groupId++) {
@@ -98,7 +79,7 @@ public class DataGenerator {
         }
     }
   
-    public void insertStudents(Connection connection) throws SQLException {
+    private void insertStudents(Connection connection) throws SQLException {
         Student student = new Student();
         Assigner dataGenerator = new Assigner();
         int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
@@ -128,7 +109,7 @@ public class DataGenerator {
         }
     }
     
-    void insertCourses(Connection connection) throws SQLException {
+    private void insertCourses(Connection connection) throws SQLException {
         try (PreparedStatement insertCourse = connection.prepareStatement(SqlQueryConstants.INSERT_COURSE)) {
             int numberOfCourses = Course.courses.size();
             for (int courseId = 0; courseId < numberOfCourses; courseId++) {
@@ -140,7 +121,7 @@ public class DataGenerator {
         }
     } 
     
-    void insertStudentsToCoursesRelations(Connection connection) throws SQLException {
+    private void insertStudentsToCoursesRelations(Connection connection) throws SQLException {
         Assigner assigner = new Assigner();
         int[][] studentsCourses = assigner.assignCoursesToStudents();
         try (PreparedStatement insertStudentCourseRelation = connection
@@ -158,7 +139,7 @@ public class DataGenerator {
         }
     }
     
-    public String fileToString(String filePath) throws IOException {
+    private String fileToString(String filePath) throws IOException {
         StringBuilder output = new StringBuilder();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filePath)))) {
             in.lines().forEach(line -> output.append(line + "\n"));
@@ -166,7 +147,7 @@ public class DataGenerator {
         return output.toString();
     }
     
-    public void setRandomFullName(Student student) {
+    private void setRandomFullName(Student student) {
         int index = random.nextInt(Student.FIRST_NAMES.length);
         String firstName = Student.FIRST_NAMES[index];
         student.setFirstName(firstName); 
@@ -176,7 +157,7 @@ public class DataGenerator {
         student.setLastName(lastName); 
     }
     
-    public void setRandomGroupName(Group group) {
+    private void setRandomGroupName(Group group) {
         final String letters = "abcdefghijklmnopqrstuvwxyz";
         StringBuilder groupName = new StringBuilder();
         
