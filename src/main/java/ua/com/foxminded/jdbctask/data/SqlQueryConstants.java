@@ -55,9 +55,9 @@ public class SqlQueryConstants {
             "WHERE\n" + 
             "    course_name = ?;";
     
-    String INSERT_STUDENT = 
+    static final String INSERT_STUDENT = 
             "INSERT INTO students(first_name, last_name)\n" + 
-            "VALUES ('Vasiliy', 'Terkin');";
+            "VALUES (?, ?);";
   
     String DELETE_STUDENT_BY_ID = 
             "DELETE FROM students\n" + 

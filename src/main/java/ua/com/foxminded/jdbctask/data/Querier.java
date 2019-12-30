@@ -19,9 +19,16 @@ public class Querier {
        int courseId = q.getCourseId(connection, courseName);
        q.getStudentsRelatedToCourse(connection, courseId);
        
-       
+       q.addNewStudent(connection, "Mihail", "Iarov");
     }
 
+    void addNewStudent(Connection connection, String firstName, String lastName) throws SQLException {
+        PreparedStatement insterNewStudent = connection.prepareStatement(SqlQueryConstants.INSERT_STUDENT);
+        insterNewStudent.setString(1,firstName);
+        insterNewStudent.setString(2,lastName);
+        insterNewStudent.executeUpdate();
+    }
+    
     void getGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
         PreparedStatement groupsStudentCountLessThan = connection.prepareStatement(SqlQueryConstants.GROUPS_STUDENT_COUNT_NOT_MORE_THAN);
         groupsStudentCountLessThan.setInt(1,n);
