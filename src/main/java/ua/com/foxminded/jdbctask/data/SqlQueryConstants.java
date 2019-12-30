@@ -31,15 +31,30 @@ public class SqlQueryConstants {
             "ORDER BY\n" + 
             "    group_id;";
     
-    String SELECT_STUDENTS_RELATED_TO_GIVEN_COURSE = 
+    static final String SELECT_STUDENTS_RELATED_TO_GIVEN_COURSE = 
             "SELECT\n" + 
-            "    student_id\n" + 
+            "    course_students.student_id,\n" + 
+            "    students.first_name,\n" + 
+            "    students.last_name\n" + 
             "FROM\n" + 
-            "    student_courses\n" + 
-            "WHERE\n" + 
-            "    course_id = 5\n" + 
+            "    (SELECT\n" + 
+            "        student_id\n" + 
+            "    FROM\n" + 
+            "        students_courses\n" + 
+            "    WHERE\n" + 
+            "        students_courses.course_id = ?) course_students\n" + 
+            "INNER JOIN students ON course_students.student_id = students.student_id\n" + 
             "ORDER BY\n" + 
-            "    student_id;";
+            "    course_students.student_id;";
+    
+    static final String SELECT_COURSE_ID = 
+            "SELECT\n" + 
+            "    course_id\n" + 
+            "FROM\n" + 
+            "    courses\n" + 
+            "WHERE\n" + 
+            "    course_name = ?;";
+    
     String INSERT_STUDENT = 
             "INSERT INTO students(first_name, last_name)\n" + 
             "VALUES ('Vasiliy', 'Terkin');";
