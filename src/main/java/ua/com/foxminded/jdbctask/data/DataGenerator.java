@@ -19,14 +19,8 @@ import ua.com.foxminded.jdbctask.university.Group;
 import ua.com.foxminded.jdbctask.university.Student;
 
 public class DataGenerator {
-    
-    String jdbcDriver;
-    String dbUrl;
-    String user;
-    String password;
    
     public void generateData() throws SQLException, IOException {
-        setConnectionProperties();
         try (Connection connection = getConnection()){
             createTables(connection);
             insertGroups(connection);
@@ -38,7 +32,11 @@ public class DataGenerator {
         }
     }
     
-    void setConnectionProperties() {
+    Connection getConnection() throws ClassNotFoundException {
+        String jdbcDriver = null;
+        String dbUrl = null;
+        String user = null;
+        String password = null;
         try (InputStream input = new FileInputStream("src/main/resources/config.properties")) {
             Properties properties = new Properties();
             properties.load(input);
@@ -51,11 +49,9 @@ public class DataGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    
-    Connection getConnection() {
         Connection connection = null;
         try {
+            Class.forName(jdbcDriver);
             connection = DriverManager.getConnection(dbUrl, user, password);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,9 +59,8 @@ public class DataGenerator {
         return connection;
     }
     
-    public void createTables(Connection connection) throws SQLException, IOException, ClassNotFoundException {
+    public void createTables(Connection connection) throws SQLException, IOException {
         try (Statement stmt = connection.createStatement()) {
-            Class.forName(jdbcDriver);
 
             stmt.executeUpdate(SqlQueryConstants.DROP_GROUPS_TABLE);
             String sql = fileToString(SqlQueryConstants.CREATE_GROUPS_TABLE_PATH);
@@ -85,7 +80,7 @@ public class DataGenerator {
         }
     }
     
-    public void insertGroups(Connection connection) throws SQLException, ClassNotFoundException {
+    public void insertGroups(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             Group group = new Group();      
             for (int i = 0; i < Assigner.NUMBER_OF_GROUPS; i++) {
@@ -98,7 +93,7 @@ public class DataGenerator {
         } 
     }
   
-    public void insertStudents(Connection connection) throws ClassNotFoundException, SQLException {
+    public void insertStudents(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()){
       
             Student student = new Student();
@@ -121,7 +116,7 @@ public class DataGenerator {
         }
     }
     
-    void insertCourses(Connection connection) throws SQLException, ClassNotFoundException {
+    void insertCourses(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()){ 
             int numberOfCourses = Course.COURSES.length;
             
@@ -133,7 +128,7 @@ public class DataGenerator {
         }
     }
     
-    void insertStudentsToCoursesRelations(Connection connection) throws SQLException, ClassNotFoundException {
+    void insertStudentsToCoursesRelations(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement()){
             Assigner assigner = new Assigner();
             int[][] studentsCourses = assigner.assignCoursesToStudents();

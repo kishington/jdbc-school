@@ -11,21 +11,23 @@ public class SqlQueryConstants {
     static final String DROP_STUDENTS_TABLE = "DROP TABLE IF EXISTS students CASCADE;";
     static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS students_courses CASCADE";
     
-    String GROUPS_STUDENT_COUNT_NOT_MORE_THAN = 
-            "SELECT\n" + 
-            "   group_id,\n" + 
-            "   number_of_students\n" + 
+
+    static final String GROUPS_STUDENT_COUNT_NOT_MORE_THAN = "SELECT\n" + 
+            "    students_in_groups.group_id,\n" + 
+            "    groups.group_name,\n" + 
+            "    number_of_students\n" + 
             "FROM\n" + 
-            "   (SELECT\n" + 
+            "    (SELECT\n" + 
             "        group_id,\n" + 
             "        COUNT (student_id) AS number_of_students\n" + 
-            "    FROM\n" + 
+            "     FROM\n" + 
             "        students\n" + 
-            "    GROUP BY\r\n" + 
+            "     GROUP BY\n" + 
             "        group_id) students_in_groups\n" + 
+            "INNER JOIN groups ON students_in_groups.group_id = groups.group_id\n" + 
             "WHERE\n" + 
-            "    group_id IS NOT NULL AND\n" + 
-            "    number_of_students < 40\n" + 
+            "    students_in_groups.group_id IS NOT NULL AND\n" + 
+            "    number_of_students < ? \n" + 
             "ORDER BY\n" + 
             "    group_id;";
     
@@ -46,7 +48,7 @@ public class SqlQueryConstants {
             "DELETE FROM students\n" + 
             "WHERE student_id = 201;";
     String REMOVE_STUDENT_FROM_COURSE = 
-            "DELETE FROM student_courses" +
+            "DELETE FROM student_courses\n" +
             "WHERE student_id = 200 AND course_id = 8;";
 
 }
