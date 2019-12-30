@@ -15,12 +15,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.Random;
 
 import ua.com.foxminded.jdbctask.university.Course;
 import ua.com.foxminded.jdbctask.university.Group;
 import ua.com.foxminded.jdbctask.university.Student;
 
 public class DataGenerator {
+    
+    private static Random random = new Random();
    
     public void generateData() throws SQLException, IOException {
         try (Connection connection = getConnection()){

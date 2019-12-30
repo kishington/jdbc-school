@@ -28,7 +28,8 @@ public class Assigner {
             for(int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
                 int courseId;
                 do {
-                    course.setRandomCourse();
+                    setRandomCourse(course);
+                    //course.setRandomCourse();
                     courseId = course.getId();
                 } while(coursesAssigned.contains(courseId));
                 coursesAssigned.add(courseId);
@@ -80,6 +81,12 @@ public class Assigner {
             permutation[index] = temp;
         }
         return permutation;
+    }
+    
+    public void setRandomCourse(Course course) {
+        int id = random.nextInt(course.getNumberOfCourses());
+        course.setId(id);
+        course.setName(Course.courses.get(id));
     }
 
 }

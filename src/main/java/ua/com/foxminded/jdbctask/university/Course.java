@@ -38,16 +38,14 @@ public class Course {
         this.name = name;
     }
     
-    public void setRandomCourse() {
-        int id = random.nextInt(courses.size());
-        this.id = id;
-        this.name = courses.get(id);
-    }
-    
     public String getDescription() {
         return description;
     }
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public int getNumberOfCourses() {
+        return courses.size();
     }
 }
