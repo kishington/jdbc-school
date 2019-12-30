@@ -59,9 +59,18 @@ public class SqlQueryConstants {
             "INSERT INTO students(first_name, last_name)\n" + 
             "VALUES (?, ?);";
   
-    String DELETE_STUDENT_BY_ID = 
+    static final String DELETE_STUDENT_BY_ID = 
             "DELETE FROM students\n" + 
-            "WHERE student_id = 201;";
+            "WHERE student_id = ?;";
+    
+    static final String SELECT_STUDENTS_COURSES = 
+            "SELECT\n" + 
+            "    course_id\n" + 
+            "FROM\n" + 
+            "    students_courses\n" + 
+            "WHERE\n" + 
+            "    student_id = ?;";
+    
     String REMOVE_STUDENT_FROM_COURSE = 
             "DELETE FROM student_courses\n" +
             "WHERE student_id = 200 AND course_id = 8;";
