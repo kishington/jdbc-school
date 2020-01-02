@@ -148,7 +148,7 @@ public class Querier {
                     String lastName = rs.getString(3);
                     //System.out.println("studentId: " + studentId + "     firstName: " + firstName
                     //        + "         lastName: " + lastName);
-                    String print = String.format("%1$10s %2$10s %3$10s","studentId: " + studentId, "firstName: " + firstName, "lastName: " + lastName);
+                    String print = String.format("%1$10s %2$20s %3$20s","studentId: " + studentId, "firstName: " + firstName, "lastName: " + lastName);
                     System.out.println(print);
                 }
             }

@@ -103,20 +103,27 @@ public class Dialog {
     
     public void printGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
         Map<Group, Integer> groups = querier.getGroupsStudentCountLessThan(connection, n);
-        //System.out.println(groups);
-        if(groups.size() == 0) {
+        // System.out.println(groups);
+        if (groups.size() == 0) {
             System.out.println("There is no groups with student count equals or less than " + n);
+        } else {
+            groups.forEach((group, studentCount) -> {
+                int groupId = group.getId();
+                String groupName = group.getName();
+                String toPrint = String.format("%1$-15s %2$-22s %3$-20s", "groupId: " + groupId,
+                        "groupName: " + groupName, "studentCount: " + studentCount);
+                System.out.println(toPrint);
+            });
         }
-        groups.forEach((group, studentCount) -> {
-            int groupId = group.getId();
-            String groupName = group.getName();
-            String toPrint = String.format("%1$-15s %2$-22s %3$-20s","groupId: " + groupId, "groupName: " + groupName, "studentCount: " + studentCount);
-            System.out.println(toPrint);
-        });
     }
     
-    public void printStudentsRelatedToCourse(Connection connection, int courseId) {
-        
+    public void printStudentsRelatedToCourse(Connection connection, String courseName) {
+        List<String> availableCourses = Course.getAvailableCourses();
+        if(availableCourses.contains(courseName)) {
+            
+        } else {
+            System.out.println("No such course is available.");
+        }
     }
     
 //    public void getStudentsRelatedToCourse(Connection connection, int courseId) throws SQLException {
