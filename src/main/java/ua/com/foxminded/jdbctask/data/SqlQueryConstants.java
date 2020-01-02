@@ -29,6 +29,19 @@ public class SqlQueryConstants {
     static final String DELETE_STUDENT_BY_ID = 
             "DELETE FROM students\n" + 
             "WHERE student_id = ?;";
+    
+    static final String SELECT_GROUPS = "SELECT * FROM groups";
+    
+    static final String SELECT_GROUPS_STUDENT_COUNT = 
+            "SELECT\n" + 
+            "   group_id,\n" + 
+            "   COUNT (student_id)\n" + 
+            "FROM\n" + 
+            "   students\n" + 
+            "GROUP BY\n" + 
+            "   group_id\n" + 
+            "ORDER BY\n" + 
+            "    group_id;";
 
     static final String SELECT_GROUPS_STUDENT_COUNT_NOT_MORE_THAN = "SELECT\n" + 
             "    students_in_groups.group_id,\n" + 
@@ -48,6 +61,8 @@ public class SqlQueryConstants {
             "    number_of_students < ? \n" + 
             "ORDER BY\n" + 
             "    group_id;";
+    
+    static final String SELECT_STUDENT_BY_ID = "SELECT * FROM students WHERE student_id = ?;";
     
     static final String SELECT_STUDENTS_RELATED_TO_GIVEN_COURSE = 
             "SELECT\n" + 

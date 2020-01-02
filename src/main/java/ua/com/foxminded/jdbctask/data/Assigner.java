@@ -82,38 +82,6 @@ public class Assigner {
         return permutation;
     }
     
-//    public void setStudentRandomFullName(Student student) {
-//        int index = random.nextInt(Student.FIRST_NAMES.length);
-//        String firstName = Student.FIRST_NAMES[index];
-//        student.setFirstName(firstName); 
-//        
-//        index = random.nextInt(Student.FIRST_NAMES.length);
-//        String lastName = Student.LAST_NAMES[index];
-//        student.setFirstName(lastName); 
-//    }
-    
-//    public void setRandomGroupName(Group group) {
-//        final String letters = "abcdefghijklmnopqrstuvwxyz";
-//        StringBuilder groupName = new StringBuilder();
-//        
-//        int index = random.nextInt(letters.length());
-//        char randomChar = letters.charAt(index);
-//        groupName.append(randomChar);        
-//        index = random.nextInt(letters.length());
-//        randomChar = letters.charAt(index);
-//        groupName.append(randomChar);
-//       
-//        groupName.append('-');
-//        
-//        int randomDigit = random.nextInt(10);
-//        groupName.append(randomDigit);
-//        randomDigit = random.nextInt(10);
-//        groupName.append(randomDigit);
-//        
-//        String groupNameString = groupName.toString();
-//        group.setName(groupNameString);
-//    }
-    
     public static int getNumberOfGroups() {
         return NUMBER_OF_GROUPS;
     }

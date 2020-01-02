@@ -181,5 +181,5 @@ public class DataGenerator {
         group.setName(groupNameString);
     }
 
-    get
+   
 }
