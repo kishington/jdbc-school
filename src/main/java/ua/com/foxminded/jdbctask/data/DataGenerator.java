@@ -179,7 +179,5 @@ public class DataGenerator {
         
         String groupNameString = groupName.toString();
         group.setName(groupNameString);
-    }
-
-   
+    } 
 }

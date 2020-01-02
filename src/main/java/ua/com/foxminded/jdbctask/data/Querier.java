@@ -1,6 +1,5 @@
 package ua.com.foxminded.jdbctask.data;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,39 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import ua.com.foxminded.jdbctask.university.Course;
-import ua.com.foxminded.jdbctask.university.Group;
 
 public class Querier {
     
     private static final String COURSE_NOT_AVAILABLE = "No such course is available.";
-
-    public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
-        DataGenerator dg = new DataGenerator();
-        Querier q = new Querier();
-        try (Connection connection = dg.getConnection()) {
-            
-            int n = 20;
-            q.getGroupsStudentCountLessThan(connection, n);
-
-            String courseName = "Physics";
-            int courseId = q.getCourseId(connection, courseName);
-            q.getStudentsRelatedToCourse(connection, courseId);
-
-            q.addNewStudent(connection, "Mihail", "Iarov");
-
-            int studentId = 200;
-            q.deleteStudent(connection, studentId);
-            
-            List<Integer> courses = q.getStudentCourses(connection, 0);
-            System.out.println(courses);
-            
-            q.assignStudentToCourse(connection, 2, "Chemistry");
-            
-            q.removeStudentFromCourse(connection, 1, "Botany");
-        }
-    }
     
-    void removeStudentFromCourse(Connection connection, int studentId, String courseName) throws SQLException {
+    public void removeStudentFromCourse(Connection connection, int studentId, String courseName) throws SQLException {
         List<Integer> studentCourses = getStudentCourses(connection, studentId);
         List<String> availableCourses = Course.getAvailableCourses();
         boolean courseAvailable = availableCourses.contains(courseName);
@@ -53,7 +25,7 @@ public class Querier {
             int courseId = getCourseId(connection, courseName);
             boolean isStudentAssignedToCourse = studentCourses.contains(courseId);
             if (!isStudentAssignedToCourse) {
-                System.out.println("Student is not assigned to this course.");
+                System.out.println("The student is not assigned to this course.");
             } else {
                 try (PreparedStatement removalOfStudentFromCourse = connection
                         .prepareStatement(SqlQueryConstants.REMOVE_STUDENT_FROM_COURSE)) {
@@ -61,15 +33,15 @@ public class Querier {
                     removalOfStudentFromCourse.setInt(2, courseId);
                     removalOfStudentFromCourse.executeUpdate();
                 }
+                System.out.println("The student has been removed from selected course.");
             }
         }
     }
     
-    
-    void assignStudentToCourse(Connection connection, int studentId, String courseName) throws SQLException {
+    public void assignStudentToCourse(Connection connection, int studentId, String courseName) throws SQLException {
         List<String> availableCourses = Course.getAvailableCourses();
         boolean courseAvailable = availableCourses.contains(courseName);
-        if(!courseAvailable) {
+        if (!courseAvailable) {
             System.out.println(COURSE_NOT_AVAILABLE);
         } else {
             int courseId = getCourseId(connection, courseName);
@@ -77,14 +49,16 @@ public class Querier {
             if (studentCourses.contains(courseId)) {
                 System.out.println("Student is already assigned to this course.");
             } else {
-                try (PreparedStatement insertStudentCourseRelation = connection.prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
+                try (PreparedStatement insertStudentCourseRelation = connection
+                        .prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
                     insertStudentCourseRelation.setInt(1, studentId);
                     insertStudentCourseRelation.setInt(2, courseId);
                     insertStudentCourseRelation.executeUpdate();
-                }        
+                }
+                System.out.println("The student has been assigned to selected course.");
             }
         }
-    }    
+    }   
     
     List<Integer> getStudentCourses(Connection connection, int studentId) throws SQLException {
         List<Integer> courses = new ArrayList<>();
@@ -153,6 +127,7 @@ public class Querier {
         }
         return output.toString();
     }
+    
     public List<Integer> getEmptyGroupsIds(Connection connection) throws SQLException {
         List<Integer> groupsWithStudents = new ArrayList<>();
         List<Integer> groupsWithoutStudents = new ArrayList<>();
@@ -199,11 +174,8 @@ public class Querier {
                     String studentId = rs.getString(1);
                     String firstName = rs.getString(2);
                     String lastName = rs.getString(3);
-                    //System.out.println("studentId: " + studentId + "     firstName: " + firstName
-                    //        + "         lastName: " + lastName);
                     String line = String.format("%1$-23s %2$-25s %3$-25s \n","student id: " + studentId, "first name: " + firstName, "last name: " + lastName);
                     output.append(line);
-                    //System.out.println(print);
                 }
             }
         }

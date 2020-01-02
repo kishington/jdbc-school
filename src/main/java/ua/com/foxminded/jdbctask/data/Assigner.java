@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import ua.com.foxminded.jdbctask.university.Course;
-import ua.com.foxminded.jdbctask.university.Group;
-import ua.com.foxminded.jdbctask.university.Student;
 
 public class Assigner {
     private static final int GROUP_SIZE_LOWER_LIMIT = 10;

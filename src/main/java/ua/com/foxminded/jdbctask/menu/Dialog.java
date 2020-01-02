@@ -2,19 +2,14 @@ package ua.com.foxminded.jdbctask.menu;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import ua.com.foxminded.jdbctask.data.DataGenerator;
 import ua.com.foxminded.jdbctask.data.Querier;
-import ua.com.foxminded.jdbctask.data.SqlQueryConstants;
 import ua.com.foxminded.jdbctask.university.Course;
-import ua.com.foxminded.jdbctask.university.Group;
 
 public class Dialog {
     private static final String MAIN_MENU_MESSAGE = "Choose one of the following:\n" + "a. Find all groups with less or equals student count\n"
@@ -26,19 +21,18 @@ public class Dialog {
     private static final String WANT_TO_CONTINUE =  "Do you want to continue (yes/no)?";
     private static final String BYE = "Bye!";
 
-    Querier querier = new Querier();
-    static DataGenerator dataGenerator = new DataGenerator();    
-    
-    public static void main(String[] args) throws SQLException, IOException {
-        Dialog d = new Dialog();
+    private Querier querier = new Querier();
+    private static DataGenerator dataGenerator = new DataGenerator();    
+
+    public void start() throws SQLException, IOException {
         Scanner scanner = new Scanner(System.in);
         try(Connection connection = dataGenerator.getConnection()) {
-            d.showMainMenu(connection, scanner);
+            showMainMenu(connection, scanner);
         }
         scanner.close();
     }
     
-    void showMainMenu(Connection connection, Scanner scanner) throws SQLException {
+    private void showMainMenu(Connection connection, Scanner scanner) throws SQLException {
         System.out.println(MAIN_MENU_MESSAGE);
         String option = scanner.nextLine();
         switch (option) {
@@ -60,11 +54,7 @@ public class Dialog {
             break;
         case "b":
             System.out.println("Select one of the folowing courses:");
-            List<String> availableCourses = Course.getAvailableCourses();
-            for (String courseName: availableCourses) {
-                System.out.print(courseName + "  ");
-            }
-            System.out.println();
+            displayAvailableCourses();
             
             String courseName = scanner.nextLine();
             printStudentsRelatedToCourse(connection, courseName);
@@ -100,10 +90,60 @@ public class Dialog {
             }
             break;
         case "e":
-            System.out.println("e");
+            System.out.println("Enter student_id: ");
+            try {
+                int studentId = scanner.nextInt();
+                if (!querier.isStudentAvailable(connection, studentId)) {
+                    System.out.println("This student is not on the database.");
+                    scanner.nextLine();
+                    doYouWantToContinue(connection, scanner);
+                } else {
+                    System.out.println("Select one of the folowing courses:");
+                    scanner.nextLine();
+                    displayAvailableCourses();
+                    courseName = scanner.nextLine();
+                    List<String> availableCourses = Course.getAvailableCourses();
+                    if(!availableCourses.contains(courseName)) {
+                        System.out.println("No such course is available.");
+                        doYouWantToContinue(connection, scanner);
+                    } else {
+                        querier.assignStudentToCourse(connection, studentId, courseName);
+                        doYouWantToContinue(connection, scanner);
+                    }
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Integer number expected.");
+                scanner.nextLine();
+                doYouWantToContinue(connection, scanner);
+            }
             break;
         case "f":
-            System.out.println("f");
+            System.out.println("Enter student_id: ");
+            try {
+                int studentId = scanner.nextInt();
+                if (!querier.isStudentAvailable(connection, studentId)) {
+                    System.out.println("This student is not on the database.");
+                    scanner.nextLine();
+                    doYouWantToContinue(connection, scanner);
+                } else {
+                    System.out.println("Select one of the folowing courses:");
+                    scanner.nextLine();
+                    displayAvailableCourses();
+                    courseName = scanner.nextLine();
+                    List<String> availableCourses = Course.getAvailableCourses();
+                    if(!availableCourses.contains(courseName)) {
+                        System.out.println("No such course is available.");
+                        doYouWantToContinue(connection, scanner);
+                    } else {
+                        querier.removeStudentFromCourse(connection, studentId, courseName);
+                        doYouWantToContinue(connection, scanner);
+                    }
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Integer number expected.");
+                scanner.nextLine();
+                doYouWantToContinue(connection, scanner);
+            }
             break;
         case "g":
             System.out.println(BYE);
@@ -115,7 +155,7 @@ public class Dialog {
         }
     }
 
-    void doYouWantToContinue(Connection connection, Scanner scanner) throws SQLException {  
+    private void doYouWantToContinue(Connection connection, Scanner scanner) throws SQLException {  
         System.out.println(WANT_TO_CONTINUE);
         String answer = scanner.nextLine();
         switch (answer) {
@@ -132,7 +172,7 @@ public class Dialog {
         }
     }
     
-    public void printGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
+    private void printGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
         String groups = querier.getGroupsStudentCountLessThan(connection, n);
         if (groups.length() == 0) {
             System.out.println("There is no groups with student count equals or less than " + n);
@@ -141,7 +181,7 @@ public class Dialog {
         }
     }
     
-    public void printStudentsRelatedToCourse(Connection connection, String courseName) throws SQLException {
+    private void printStudentsRelatedToCourse(Connection connection, String courseName) throws SQLException {
         List<String> availableCourses = Course.getAvailableCourses();
         if(availableCourses.contains(courseName)) {
             int courseId = availableCourses.indexOf(courseName);
@@ -151,6 +191,12 @@ public class Dialog {
             System.out.println("No such course is available.");
         }
     }
-    
 
+    public void displayAvailableCourses() {
+        List<String> availableCourses = Course.getAvailableCourses();
+        for (String courseName: availableCourses) {
+            System.out.print(courseName + "  ");
+        }
+        System.out.println();
+    }
 }
