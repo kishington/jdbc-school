@@ -6,9 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ua.com.foxminded.jdbctask.university.Course;
+import ua.com.foxminded.jdbctask.university.Group;
 
 public class Querier {
     
@@ -42,7 +45,8 @@ public class Querier {
     
     void removeStudentFromCourse(Connection connection, int studentId, String courseName) throws SQLException {
         List<Integer> studentCourses = getStudentCourses(connection, studentId);
-        boolean courseAvailable = Course.courses.contains(courseName);
+        List<String> availableCourses = Course.getAvailableCourses();
+        boolean courseAvailable = availableCourses.contains(courseName);
         if (!courseAvailable) {
             System.out.println(COURSE_NOT_AVAILABLE);
         } else {
@@ -63,7 +67,8 @@ public class Querier {
     
     
     void assignStudentToCourse(Connection connection, int studentId, String courseName) throws SQLException {
-        boolean courseAvailable = Course.courses.contains(courseName);
+        List<String> availableCourses = Course.getAvailableCourses();
+        boolean courseAvailable = availableCourses.contains(courseName);
         if(!courseAvailable) {
             System.out.println(COURSE_NOT_AVAILABLE);
         } else {
@@ -110,23 +115,29 @@ public class Querier {
         }
     }
 
-    void getGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
+    public Map<Group, Integer> getGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
+        Map<Group, Integer> groups = new HashMap<>();
         try (PreparedStatement groupsStudentCountLessThan = connection
                 .prepareStatement(SqlQueryConstants.SELECT_GROUPS_STUDENT_COUNT_NOT_MORE_THAN)) {
             groupsStudentCountLessThan.setInt(1, n);
             try (ResultSet rs = groupsStudentCountLessThan.executeQuery()) {
                 while (rs.next()) {
-                    String groupId = rs.getString(1);
+                    Group group = new Group();
+                    int groupId = rs.getInt(1);
+                    group.setId(groupId);
                     String groupName = rs.getString(2);
-                    String studentCount = rs.getString(3);
-                    System.out.println("groupId: " + groupId + "     groupName: " + groupName
-                            + "         studentCount: " + studentCount);
+                    group.setName(groupName);
+                    int studentCount = rs.getInt(3);
+                    groups.put(group, Integer.valueOf(studentCount));
+                    //String print = String.format("%1$-15s %2$-22s %3$-20s","groupId: " + groupId, "groupName: " + groupName, "studentCount: " + studentCount);
+                    //System.out.println(print);
                 }
             }
         }
+        return groups;
     }
 
-    void getStudentsRelatedToCourse(Connection connection, int courseId) throws SQLException {
+    public void getStudentsRelatedToCourse(Connection connection, int courseId) throws SQLException {
         try (PreparedStatement studentsRelatedToCourse = connection
                 .prepareStatement(SqlQueryConstants.SELECT_STUDENTS_RELATED_TO_GIVEN_COURSE)) {
             studentsRelatedToCourse.setInt(1, courseId);
@@ -135,8 +146,10 @@ public class Querier {
                     String studentId = rs.getString(1);
                     String firstName = rs.getString(2);
                     String lastName = rs.getString(3);
-                    System.out.println("studentId: " + studentId + "     firstName: " + firstName
-                            + "         lastName: " + lastName);
+                    //System.out.println("studentId: " + studentId + "     firstName: " + firstName
+                    //        + "         lastName: " + lastName);
+                    String print = String.format("%1$10s %2$10s %3$10s","studentId: " + studentId, "firstName: " + firstName, "lastName: " + lastName);
+                    System.out.println(print);
                 }
             }
         }

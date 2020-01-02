@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -31,7 +32,7 @@ public class DataGenerator {
         }
     }
 
-    Connection getConnection() throws IOException, SQLException {
+    public Connection getConnection() throws IOException, SQLException {
         String jdbcDriver = null;
         String dbUrl = null;
         String user = null;
@@ -111,9 +112,10 @@ public class DataGenerator {
     
     private void insertCourses(Connection connection) throws SQLException {
         try (PreparedStatement insertCourse = connection.prepareStatement(SqlQueryConstants.INSERT_COURSE)) {
-            int numberOfCourses = Course.courses.size();
+            int numberOfCourses = Course.getTotalNumberOfAvailableCourses();
+            List<String> availableCourses = Course.getAvailableCourses();
             for (int courseId = 0; courseId < numberOfCourses; courseId++) {
-                String courseName = Course.courses.get(courseId);
+                String courseName = availableCourses.get(courseId);
                 insertCourse.setInt(1, courseId);
                 insertCourse.setString(2, courseName);
                 insertCourse.executeUpdate();

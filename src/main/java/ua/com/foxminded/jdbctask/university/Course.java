@@ -8,7 +8,7 @@ public class Course {
     private String name;
     private String description;
 
-    public static List<String> courses = new ArrayList<>();
+    private static List<String> courses = new ArrayList<>();
     static {
         courses.add("Maths");
         courses.add("Biology");
@@ -42,6 +42,10 @@ public class Course {
         this.description = description;
     }
     
+    public static List<String> getAvailableCourses() {
+        List<String> coursesCopy = new ArrayList<>(courses);
+        return coursesCopy;
+    }
     public static int getTotalNumberOfAvailableCourses() {
         return courses.size();
     }
