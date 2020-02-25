@@ -32,25 +32,29 @@ public class Dialog {
         scanner.close();
     }
     
+    private void findGroupsStudentCountNoMoreThan(Connection connection, Scanner scanner) throws SQLException {
+        System.out.print("Enter student count: ");
+        int studentCount;
+        try {
+            studentCount  = scanner.nextInt();
+            System.out.println();
+            printGroupsStudentCountLessThan(connection, studentCount);
+            System.out.println();
+            scanner.nextLine();
+            doYouWantToContinue(connection, scanner);
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
+            doYouWantToContinue(connection, scanner);
+        }
+    }
+    
     private void showMainMenu(Connection connection, Scanner scanner) throws SQLException {
         System.out.println(MAIN_MENU_MESSAGE);
         String option = scanner.nextLine();
         switch (option) {
         case "a":
-            System.out.print("Enter student count: ");
-            int studentCount;
-            try {
-                studentCount  = scanner.nextInt();
-                System.out.println();
-                printGroupsStudentCountLessThan(connection, studentCount);
-                System.out.println();
-                scanner.nextLine();
-                doYouWantToContinue(connection, scanner);
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Integer number expected.");
-                scanner.nextLine();
-                doYouWantToContinue(connection, scanner);
-            }
+            findGroupsStudentCountNoMoreThan(connection, scanner);
             break;
         case "b":
             System.out.println("Select one of the folowing courses:");
