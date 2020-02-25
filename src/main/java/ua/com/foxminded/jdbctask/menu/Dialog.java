@@ -14,7 +14,7 @@ import ua.com.foxminded.jdbctask.university.Course;
 public class Dialog {
     private static final String MAIN_MENU_MESSAGE = "Choose one of the following:\n" + "a. Find all groups with less or equals student count\n"
             + "b. Find all students related to course with given name\n" + "c. Add new student\n"
-            + "d. Delete student by student_id\n" + "e. Add a student to a course (from a list)\n"
+            + "d. Delete student by student_id\n" + "e. Assign a student to a course (from a list)\n"
             + "f. Remove the student from one of his or her courses\n"
             + "g. Exit the program";
     private static final String NO_SUCH_MENU = "No such menu available.";
@@ -30,6 +30,38 @@ public class Dialog {
             showMainMenu(connection, scanner);
         }
         scanner.close();
+    }
+    
+    private void showMainMenu(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println(MAIN_MENU_MESSAGE);
+        String option = scanner.nextLine();
+        switch (option) {
+        case "a":
+            findGroupsStudentCountNoMoreThan(connection, scanner);
+            break;
+        case "b":
+            findStudentsRelatedToCourse(connection, scanner);
+            break;
+        case "c":
+            addNewStudent(connection, scanner);
+            break;
+        case "d":
+            deleteStudentById(connection, scanner);
+            break;
+        case "e":
+            assignStudentToCourse(connection, scanner);
+            break;
+        case "f":
+            removeStudentFromCourse(connection, scanner);
+            break;
+        case "g":
+            System.out.println(BYE);
+            break;
+        default:
+            System.out.println(NO_SUCH_MENU);
+            doYouWantToContinue(connection, scanner);
+            break;
+        }
     }
     
     private void findGroupsStudentCountNoMoreThan(Connection connection, Scanner scanner) throws SQLException {
@@ -89,85 +121,61 @@ public class Dialog {
         }
     }
     
-    private void showMainMenu(Connection connection, Scanner scanner) throws SQLException {
-        System.out.println(MAIN_MENU_MESSAGE);
-        String option = scanner.nextLine();
-        switch (option) {
-        case "a":
-            findGroupsStudentCountNoMoreThan(connection, scanner);
-            break;
-        case "b":
-            findStudentsRelatedToCourse(connection, scanner);
-            break;
-        case "c":
-            addNewStudent(connection, scanner);
-            break;
-        case "d":
-            deleteStudentById(connection, scanner);
-            break;
-        case "e":
-            System.out.println("Enter student_id: ");
-            try {
-                int studentId = scanner.nextInt();
-                if (!querier.isStudentAvailable(connection, studentId)) {
-                    System.out.println("This student is not on the database.");
-                    scanner.nextLine();
-                    doYouWantToContinue(connection, scanner);
-                } else {
-                    System.out.println("Select one of the folowing courses:");
-                    scanner.nextLine();
-                    displayAvailableCourses();
-                    String courseName = scanner.nextLine();
-                    List<String> availableCourses = Course.getAvailableCourses();
-                    if(!availableCourses.contains(courseName)) {
-                        System.out.println("No such course is available.");
-                        doYouWantToContinue(connection, scanner);
-                    } else {
-                        querier.assignStudentToCourse(connection, studentId, courseName);
-                        doYouWantToContinue(connection, scanner);
-                    }
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Integer number expected.");
+    private void assignStudentToCourse(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("Enter student_id: ");
+        try {
+            int studentId = scanner.nextInt();
+            if (!querier.isStudentAvailable(connection, studentId)) {
+                System.out.println("This student is not on the database.");
                 scanner.nextLine();
                 doYouWantToContinue(connection, scanner);
-            }
-            break;
-        case "f":
-            System.out.println("Enter student_id: ");
-            try {
-                int studentId = scanner.nextInt();
-                if (!querier.isStudentAvailable(connection, studentId)) {
-                    System.out.println("This student is not on the database.");
-                    scanner.nextLine();
+            } else {
+                System.out.println("Select one of the folowing courses:");
+                scanner.nextLine();
+                displayAvailableCourses();
+                String courseName = scanner.nextLine();
+                List<String> availableCourses = Course.getAvailableCourses();
+                if(!availableCourses.contains(courseName)) {
+                    System.out.println("No such course is available.");
                     doYouWantToContinue(connection, scanner);
                 } else {
-                    System.out.println("Select one of the folowing courses:");
-                    scanner.nextLine();
-                    displayAvailableCourses();
-                    String courseName = scanner.nextLine();
-                    List<String> availableCourses = Course.getAvailableCourses();
-                    if(!availableCourses.contains(courseName)) {
-                        System.out.println("No such course is available.");
-                        doYouWantToContinue(connection, scanner);
-                    } else {
-                        querier.removeStudentFromCourse(connection, studentId, courseName);
-                        doYouWantToContinue(connection, scanner);
-                    }
+                    querier.assignStudentToCourse(connection, studentId, courseName);
+                    doYouWantToContinue(connection, scanner);
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Integer number expected.");
-                scanner.nextLine();
-                doYouWantToContinue(connection, scanner);
             }
-            break;
-        case "g":
-            System.out.println(BYE);
-            break;
-        default:
-            System.out.println(NO_SUCH_MENU);
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
             doYouWantToContinue(connection, scanner);
-            break;
+        }
+    }
+    
+    private void removeStudentFromCourse(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("Enter student_id: ");
+        try {
+            int studentId = scanner.nextInt();
+            if (!querier.isStudentAvailable(connection, studentId)) {
+                System.out.println("This student is not on the database.");
+                scanner.nextLine();
+                doYouWantToContinue(connection, scanner);
+            } else {
+                System.out.println("Select one of the folowing courses:");
+                scanner.nextLine();
+                displayAvailableCourses();
+                String courseName = scanner.nextLine();
+                List<String> availableCourses = Course.getAvailableCourses();
+                if(!availableCourses.contains(courseName)) {
+                    System.out.println("No such course is available.");
+                    doYouWantToContinue(connection, scanner);
+                } else {
+                    querier.removeStudentFromCourse(connection, studentId, courseName);
+                    doYouWantToContinue(connection, scanner);
+                }
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
+            doYouWantToContinue(connection, scanner);
         }
     }
 
