@@ -81,7 +81,6 @@ public class DataGenerator {
     }
   
     private void insertStudents(Connection connection) throws SQLException {
-        Student student = new Student();
         Assigner dataGenerator = new Assigner();
         int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
         try (PreparedStatement insertAssignedStudent = connection
@@ -89,9 +88,8 @@ public class DataGenerator {
                 PreparedStatement insertNotAssignedStudent = connection
                         .prepareStatement(SqlQueryConstants.INSERT_NOT_ASSIGNED_STUDENT)) {
             for (int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
-                setRandomFullName(student);
-                String firstName = student.getFirstName();
-                String lastName = student.getLastName();
+                String firstName = getRandomFirstName();
+                String lastName = getRandomLastName();
                 boolean studentAssignedToGroup = studentsToGroupsDistribution[studentId][0] == Assigner.STUDENT_ASSIGNED;
                 if (studentAssignedToGroup) {
                     int groupId = studentsToGroupsDistribution[studentId][1];
@@ -149,14 +147,14 @@ public class DataGenerator {
         return output.toString();
     }
     
-    private void setRandomFullName(Student student) {
-        int index = random.nextInt(Student.FIRST_NAMES.length);
-        String firstName = Student.FIRST_NAMES[index];
-        student.setFirstName(firstName); 
-        
-        index = random.nextInt(Student.LAST_NAMES.length);
-        String lastName = Student.LAST_NAMES[index];
-        student.setLastName(lastName); 
+    private String getRandomFirstName() {
+        int index = random.nextInt(Student.firstNames.size());
+        return Student.firstNames.get(index);
+    }
+    
+    private String getRandomLastName() {
+        int index = random.nextInt(Student.lastNames.size());
+        return Student.lastNames.get(index);
     }
     
     private void setRandomGroupName(Group group) {

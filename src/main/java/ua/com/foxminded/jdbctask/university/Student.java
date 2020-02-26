@@ -1,49 +1,54 @@
 package ua.com.foxminded.jdbctask.university;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Student {
 
-    private int id;
-    private int groupId;
-    private String firstName;
-    private String lastName;
-
-
-    public static final String[] FIRST_NAMES = { "Imran", "Raj", "Siva", "Suresh", "Muhammad", "Salim", "Vladimir", "John",
-            "Oliver", "Ahmed", "Aziz", "Mikhail", "Oleg", "Ramzan", "Victor", "Istvan", "Steven", "Andrew", "Mumtaz",
-            "Alexey" };
-    public static final String[] LAST_NAMES = { "Putin", "Medvedev", "Poroshenko", "Lukashenko", "Zelensky", "Kadyrov",
-            "Timoshenko", "Petrov", "Bashyrov", "Lutsenko", "Kobolev", "Abbas", "Abadi", "Antar", "Arian", "Lyashko",
-            "Nikulin", "Vitsin", "Morgunov", "Trump" };    
-
-    public int getId() {
-        return id;
+    public static final List<String> firstNames = new ArrayList<>();
+    static {
+        firstNames.add("Imran");
+        firstNames.add("Raj");
+        firstNames.add("Siva");
+        firstNames.add("Suresh");
+        firstNames.add("Muhammad");
+        firstNames.add("Vladimir");
+        firstNames.add("John");
+        firstNames.add("Oliver");
+        firstNames.add("Ahmed");
+        firstNames.add("Aziz");
+        firstNames.add("Mikhail");
+        firstNames.add("Oleg");
+        firstNames.add("Ramzan");
+        firstNames.add("Victor");
+        firstNames.add("Istvan");
+        firstNames.add("Steven");
+        firstNames.add("Andrew");
+        firstNames.add("Mumtaz");
+        firstNames.add("Alexey");
     }
     
-    public void setId(int id) {
-        this.id = id;
-    }
-    
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
-    
-    public String getFirstName() {
-        return firstName;
-    }
-    
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-    
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public static final List<String> lastNames = new ArrayList<>();
+    static {
+        lastNames.add("Putin");
+        lastNames.add("Medvedev");
+        lastNames.add("Poroshenko");
+        lastNames.add("Lukashenko");
+        lastNames.add("Zelensky");
+        lastNames.add("Kadyrov");
+        lastNames.add("Timoshenko");
+        lastNames.add("Petrov");
+        lastNames.add("Bashyrov");
+        lastNames.add("Lutsenko");
+        lastNames.add("Kobolev");
+        lastNames.add("Abbas");
+        lastNames.add("Abadi");
+        lastNames.add("Antar");
+        lastNames.add("Arian");
+        lastNames.add("Lyashko");
+        lastNames.add("Nikulin");
+        lastNames.add("Vitsin");
+        lastNames.add("Morgunov");
+        lastNames.add("Trump");
     }
 }
