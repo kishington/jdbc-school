@@ -49,13 +49,13 @@ public class Dialog {
                 option = displayStudentsRelatedToCourse(connection, scanner);
                 break;
             case "c":
-                addNewStudent(connection, scanner);
+                option = addNewStudent2(connection, scanner);
                 break;
             case "d":
-                deleteStudentById(connection, scanner);
+                option = deleteStudentById2(connection, scanner);
                 break;
             case "e":
-                assignStudentToCourse(connection, scanner);
+                option = assignStudentToCourse2(connection, scanner);
                 break;
             case "f":
                 removeStudentFromCourse(connection, scanner);
@@ -100,6 +100,95 @@ public class Dialog {
         String courseName = scanner.nextLine();
         printStudentsRelatedToCourse(connection, courseName);
         return askToContinueProgram(scanner);
+    }
+    
+    private String addNewStudent2(Connection connection, Scanner scanner) throws SQLException {
+        System.out.print("Enter first name: ");
+        String firstName = scanner.nextLine();
+        System.out.print("Enter last name: ");
+        String lastName = scanner.nextLine();
+        querier.addNewStudent(connection, firstName, lastName);
+        System.out.println("Student added to the database.");
+        return askToContinueProgram(scanner);
+    }
+    
+    private String deleteStudentById2(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("Enter student_id: ");
+        try {
+            int studentId = scanner.nextInt();
+            if (!querier.isStudentAvailable(connection, studentId)) {
+                System.out.println("This student is not on the database.");
+                scanner.nextLine();
+                return askToContinueProgram(scanner);
+            } else {
+                querier.deleteStudent(connection, studentId);
+                System.out.println("This student has been deleted from the database.");
+                scanner.nextLine();
+                return askToContinueProgram(scanner);
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
+        }
+    }
+    
+    private String assignStudentToCourse2(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("Enter student_id: ");
+        try {
+            int studentId = scanner.nextInt();
+            if (!querier.isStudentAvailable(connection, studentId)) {
+                System.out.println("This student is not on the database.");
+                scanner.nextLine();
+                return askToContinueProgram(scanner);
+            } else {
+                System.out.println("Select one of the folowing courses:");
+                scanner.nextLine();
+                displayAvailableCourses();
+                String courseName = scanner.nextLine();
+                List<String> availableCourses = Course.getAvailableCourses();
+                if(!availableCourses.contains(courseName)) {
+                    System.out.println("No such course is available.");
+                    return askToContinueProgram(scanner);
+                } else {
+                    querier.assignStudentToCourse(connection, studentId, courseName);
+                    return askToContinueProgram(scanner);
+                }
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
+        }
+    }
+    
+    private String removeStudentFromCourse2(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("Enter student_id: ");
+        try {
+            int studentId = scanner.nextInt();
+            if (!querier.isStudentAvailable(connection, studentId)) {
+                System.out.println("This student is not on the database.");
+                scanner.nextLine();
+                return askToContinueProgram(scanner);
+            } else {
+                System.out.println("Select one of the folowing courses:");
+                scanner.nextLine();
+                displayAvailableCourses();
+                String courseName = scanner.nextLine();
+                List<String> availableCourses = Course.getAvailableCourses();
+                if(!availableCourses.contains(courseName)) {
+                    System.out.println("No such course is available.");
+                    return askToContinueProgram(scanner);
+                } else {
+                    querier.removeStudentFromCourse(connection, studentId, courseName);
+                    return askToContinueProgram(scanner);
+                }
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
+        }
     }
     
     private String askToContinueProgram(Scanner scanner) {
