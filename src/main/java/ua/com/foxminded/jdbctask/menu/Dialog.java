@@ -21,7 +21,8 @@ public class Dialog {
             + "g. Exit the program";
     private static final String NO_SUCH_MENU = "No such menu available.";
     private static final String WANT_TO_CONTINUE =  "Do you want to continue (yes/no)?";
-    private static final String BYE = "Bye!";
+    private static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
+    private static final String BYE = "Thank you!\nBye!";
 
     private Querier querier = new Querier();
     private static DataGenerator dataGenerator = new DataGenerator();    
@@ -34,7 +35,7 @@ public class Dialog {
         scanner.close();
     }
     
-    private void showMainMenu(Connection connection, Scanner scanner) throws SQLException {
+    private void showMainMenu(Connection connection, Scanner scanner) {
         boolean wantExitProgram = false;
         String option = MAIN_MENU;
         while(!wantExitProgram) {
@@ -76,44 +77,58 @@ public class Dialog {
         }
     }
     
-    private String displayGroupsStudentCountNoMoreThan(Connection connection, Scanner scanner) throws SQLException {
+    private String displayGroupsStudentCountNoMoreThan(Connection connection, Scanner scanner) {
         System.out.print("Enter student count: ");
-        String nextMainMenuOption;
         try {
             int studentCount  = scanner.nextInt();
             System.out.println();
             printGroupsStudentCountLessThan(connection, studentCount);
             System.out.println();
             scanner.nextLine();
-            nextMainMenuOption = askToContinueProgram(scanner);
+            return askToContinueProgram(scanner);
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Integer number expected.");
             scanner.nextLine();
-            nextMainMenuOption = askToContinueProgram(scanner);
+            return askToContinueProgram(scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
         }
-        return nextMainMenuOption;
     }
     
-    private String displayStudentsRelatedToCourse(Connection connection, Scanner scanner) throws SQLException {
-        System.out.println("Select one of the folowing courses:");
-        displayAvailableCourses();
-        
-        String courseName = scanner.nextLine();
-        printStudentsRelatedToCourse(connection, courseName);
-        return askToContinueProgram(scanner);
+    private String displayStudentsRelatedToCourse(Connection connection, Scanner scanner) {
+        try {
+            System.out.println("Select one of the folowing courses:");
+            displayAvailableCourses();
+            
+            String courseName = scanner.nextLine();
+            printStudentsRelatedToCourse(connection, courseName);
+            return askToContinueProgram(scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
+        }
     }
     
-    private String addNewStudent(Connection connection, Scanner scanner) throws SQLException {
-        System.out.print("Enter first name: ");
-        String firstName = scanner.nextLine();
-        System.out.print("Enter last name: ");
-        String lastName = scanner.nextLine();
-        querier.addNewStudent(connection, firstName, lastName);
-        System.out.println("Student added to the database.");
-        return askToContinueProgram(scanner);
+    private String addNewStudent(Connection connection, Scanner scanner) {
+        try {
+            System.out.print("Enter first name: ");
+            String firstName = scanner.nextLine();
+            System.out.print("Enter last name: ");
+            String lastName = scanner.nextLine();
+            querier.addNewStudent(connection, firstName, lastName);
+            System.out.println("Student added to the database.");
+            return askToContinueProgram(scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
+        }
     }
     
-    private String deleteStudentById(Connection connection, Scanner scanner) throws SQLException {
+    private String deleteStudentById(Connection connection, Scanner scanner) {
         System.out.println("Enter student_id: ");
         try {
             int studentId = scanner.nextInt();
@@ -131,10 +146,14 @@ public class Dialog {
             System.out.println("Invalid input. Integer number expected.");
             scanner.nextLine();
             return askToContinueProgram(scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
         }
     }
     
-    private String assignStudentToCourse(Connection connection, Scanner scanner) throws SQLException {
+    private String assignStudentToCourse(Connection connection, Scanner scanner) {
         System.out.println("Enter student_id: ");
         try {
             int studentId = scanner.nextInt();
@@ -160,10 +179,14 @@ public class Dialog {
             System.out.println("Invalid input. Integer number expected.");
             scanner.nextLine();
             return askToContinueProgram(scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
         }
     }
     
-    private String removeStudentFromCourse(Connection connection, Scanner scanner) throws SQLException {
+    private String removeStudentFromCourse(Connection connection, Scanner scanner) {
         System.out.println("Enter student_id: ");
         try {
             int studentId = scanner.nextInt();
@@ -187,6 +210,10 @@ public class Dialog {
             }
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
+            return askToContinueProgram(scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
             scanner.nextLine();
             return askToContinueProgram(scanner);
         }
