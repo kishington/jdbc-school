@@ -22,17 +22,26 @@ public class Dialog {
     private static final String NO_SUCH_MENU = "No such menu available.";
     private static final String WANT_TO_CONTINUE =  "Do you want to continue (yes/no)?";
     private static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
+    private static final String FILE_ACCSESS_PROBLEM = "Sorry, problem with file access.";
+    private static final String CONTACT_SUPPORT = "Try to reload the program of contact support.";
     private static final String BYE = "Thank you!\nBye!";
 
     private Querier querier = new Querier();
     private static DataGenerator dataGenerator = new DataGenerator();    
 
-    public void start() throws SQLException, IOException {
+    public void start() {
         Scanner scanner = new Scanner(System.in);
         try(Connection connection = dataGenerator.getConnection()) {
             showMainMenu(connection, scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
+            System.out.println(CONTACT_SUPPORT);
+        } catch (IOException e) {
+            System.out.println(FILE_ACCSESS_PROBLEM);
+            System.out.println(CONTACT_SUPPORT);
+        } finally {
+            scanner.close();
         }
-        scanner.close();
     }
     
     private void showMainMenu(Connection connection, Scanner scanner) {
