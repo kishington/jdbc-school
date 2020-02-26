@@ -12,7 +12,8 @@ import ua.com.foxminded.jdbctask.data.Querier;
 import ua.com.foxminded.jdbctask.university.Course;
 
 public class Dialog {
-    private static final String MAIN_MENU_MESSAGE = "Choose one of the following:\n" + "a. Find all groups with less or equals student count\n"
+    private static final String MAIN_MENU = "Choose one of the following:\n"
+            + "a. Find all groups with less or equals student count\n"
             + "b. Find all students related to course with given name\n" + "c. Add new student\n"
             + "d. Delete student by student_id\n" + "e. Assign a student to a course (from a list)\n"
             + "f. Remove the student from one of his or her courses\n"
@@ -27,13 +28,96 @@ public class Dialog {
     public void start() throws SQLException, IOException {
         Scanner scanner = new Scanner(System.in);
         try(Connection connection = dataGenerator.getConnection()) {
-            showMainMenu(connection, scanner);
+            showMainMenu2(connection, scanner);
         }
         scanner.close();
     }
     
+    private void showMainMenu2(Connection connection, Scanner scanner) throws SQLException {
+        boolean wantExitProgram = false;
+        String option = MAIN_MENU;
+        while(!wantExitProgram) {
+            switch (option) {
+            case MAIN_MENU:
+                System.out.println(MAIN_MENU);
+                option = scanner.nextLine();
+                break;
+            case "a":
+                option = displayGroupsStudentCountNoMoreThan(connection, scanner);
+                break;
+            case "b":
+                option = displayStudentsRelatedToCourse(connection, scanner);
+                break;
+            case "c":
+                addNewStudent(connection, scanner);
+                break;
+            case "d":
+                deleteStudentById(connection, scanner);
+                break;
+            case "e":
+                assignStudentToCourse(connection, scanner);
+                break;
+            case "f":
+                removeStudentFromCourse(connection, scanner);
+                break;
+            case "g":
+                wantExitProgram = true;
+                System.out.println(BYE);
+                break;
+            case NO_SUCH_MENU:
+                System.out.println(NO_SUCH_MENU);
+                option = askToContinueProgram(scanner);
+                break;
+            default:
+                option = NO_SUCH_MENU;
+                break;
+            }
+        }
+    }
+    
+    private String displayGroupsStudentCountNoMoreThan(Connection connection, Scanner scanner) throws SQLException {
+        System.out.print("Enter student count: ");
+        String nextMainMenuOption;
+        try {
+            int studentCount  = scanner.nextInt();
+            System.out.println();
+            printGroupsStudentCountLessThan(connection, studentCount);
+            System.out.println();
+            scanner.nextLine();
+            nextMainMenuOption = askToContinueProgram(scanner);
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Integer number expected.");
+            scanner.nextLine();
+            nextMainMenuOption = askToContinueProgram(scanner);
+        }
+        return nextMainMenuOption;
+    }
+    
+    private String displayStudentsRelatedToCourse(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("Select one of the folowing courses:");
+        displayAvailableCourses();
+        
+        String courseName = scanner.nextLine();
+        printStudentsRelatedToCourse(connection, courseName);
+        return askToContinueProgram(scanner);
+    }
+    
+    private String askToContinueProgram(Scanner scanner) {
+        System.out.println(WANT_TO_CONTINUE);
+        String answer = scanner.nextLine();
+        if (answer.equals("yes")) {
+            return MAIN_MENU;
+        } else {
+            if (answer.equals("no")) {
+                return "g";
+            } else {
+                return NO_SUCH_MENU;
+            }
+        }
+    }
+    
     private void showMainMenu(Connection connection, Scanner scanner) throws SQLException {
-        System.out.println(MAIN_MENU_MESSAGE);
+        System.out.println(MAIN_MENU);
         String option = scanner.nextLine();
         switch (option) {
         case "a":
@@ -63,6 +147,8 @@ public class Dialog {
             break;
         }
     }
+    
+
     
     private void findGroupsStudentCountNoMoreThan(Connection connection, Scanner scanner) throws SQLException {
         System.out.print("Enter student count: ");
