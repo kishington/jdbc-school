@@ -15,7 +15,7 @@ public class Dialog {
     public static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
     public static final String FILE_ACCSESS_PROBLEM = "Sorry, problem with file access.";
     public static final String CONTACT_SUPPORT = "Try to reload the program or contact support.";
-    private static final String PROGRAM_ERROR = "Program error!";
+    public static final String PROGRAM_ERROR = "Program error!";
     private static final String STUDENT_NOT_IN_DATABASE = "This student is not on the database.";
     private static final String SELECT_COURSE = "Select one of the folowing courses:";
     

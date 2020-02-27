@@ -24,7 +24,7 @@ public class DataGenerator {
     private static final String DB_PROPERTIES_PATH = "src/main/resources/config.properties";
     private static final Random random = new Random();
    
-    public void generateData() throws SQLException, IOException {
+    public void generateData() {
         try (Connection connection = getConnection()) {
             createTables(connection);
             insertGroups(connection);
@@ -37,10 +37,13 @@ public class DataGenerator {
         } catch (IOException e) {
             System.out.println(Dialog.FILE_ACCSESS_PROBLEM);
             System.out.println(Dialog.CONTACT_SUPPORT);
+        } catch (Exception e) {
+            System.out.println(Dialog.PROGRAM_ERROR);
+            System.out.println(Dialog.CONTACT_SUPPORT);
         }
     }
 
-    public Connection getConnection() throws IOException, SQLException {
+    public Connection getConnection() throws IOException, SQLException, ClassNotFoundException {
         String jdbcDriver = null;
         String dbUrl = null;
         String user = null;
@@ -53,13 +56,14 @@ public class DataGenerator {
             user = properties.getProperty("dbUser");
             password = properties.getProperty("dbPassword");
         }
+        boolean credentialsNotNull = (jdbcDriver != null) && (dbUrl != null) && (user != null) && (password != null);
         Connection connection = null;
-        try {
-            Class.forName(jdbcDriver);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        if (credentialsNotNull) {
+            Class.forName(jdbcDriver);    
+            connection = DriverManager.getConnection(dbUrl, user, password);
+        } else {
+            throw new NullPointerException();
         }
-        connection = DriverManager.getConnection(dbUrl, user, password);
         return connection;
     }
     

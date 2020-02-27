@@ -12,8 +12,7 @@ import java.util.Map;
 import ua.com.foxminded.jdbctask.university.Course;
 
 public class Querier {
-    
-    private static final String COURSE_NOT_AVAILABLE2 = "No such course is available.";
+   
     public static final int STUDENT_NOT_ASSIGNED_TO_COURSE = -1;
     public static final int COURSE_NOT_AVAILABLE = 0;
     public static final int STUDENT_REMOVED_FROM_COURSE = 1;
@@ -26,13 +25,11 @@ public class Querier {
         boolean courseAvailable = availableCourses.contains(courseName);
         if (!courseAvailable) {
             return COURSE_NOT_AVAILABLE;
-           // System.out.println(COURSE_NOT_AVAILABLE2);
         } else {
             int courseId = getCourseId(connection, courseName);
             boolean isStudentAssignedToCourse = studentCourses.contains(courseId);
             if (!isStudentAssignedToCourse) {
                 return STUDENT_NOT_ASSIGNED_TO_COURSE;
-                // System.out.println("The student is not assigned to this course.");
             } else {
                 try (PreparedStatement removalOfStudentFromCourse = connection
                         .prepareStatement(SqlQueryConstants.REMOVE_STUDENT_FROM_COURSE)) {
@@ -41,7 +38,6 @@ public class Querier {
                     removalOfStudentFromCourse.executeUpdate();
                 }
                 return STUDENT_REMOVED_FROM_COURSE;
-                //System.out.println("The student has been removed from selected course.");
             }
         }
     }
@@ -51,13 +47,11 @@ public class Querier {
         boolean courseAvailable = availableCourses.contains(courseName);
         if (!courseAvailable) {
             return COURSE_NOT_AVAILABLE;
-            // System.out.println(COURSE_NOT_AVAILABLE2);
         } else {
             int courseId = getCourseId(connection, courseName);
             List<Integer> studentCourses = getStudentCourses(connection, studentId);
             if (studentCourses.contains(courseId)) {
                 return STUDENT_ALREADY_ASSIGNED;
-                // System.out.println("Student is already assigned to this course.");
             } else {
                 try (PreparedStatement insertStudentCourseRelation = connection
                         .prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
@@ -66,7 +60,6 @@ public class Querier {
                     insertStudentCourseRelation.executeUpdate();
                 }
                 return STUDENT_ASSIGNED_SUCCESSFULLY;
-                //System.out.println("The student has been assigned to selected course.");
             }
         }
     }   
