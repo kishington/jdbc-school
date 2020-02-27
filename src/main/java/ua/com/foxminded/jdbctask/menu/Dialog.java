@@ -7,7 +7,6 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import ua.com.foxminded.jdbctask.data.DataGenerator;
 import ua.com.foxminded.jdbctask.data.DatabaseConnectionGetter;
 import ua.com.foxminded.jdbctask.data.Querier;
 import ua.com.foxminded.jdbctask.models.Course;

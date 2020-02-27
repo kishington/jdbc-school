@@ -1,6 +1,6 @@
 package ua.com.foxminded.jdbctask.data;
 
-public abstract class SqlQueryConstants {
+public interface SqlQueryConstants {
     static final int NUMBER_OF_TABLES = 4;
     
     static final String DROP_GROUPS_TABLE = "DROP TABLE IF EXISTS groups CASCADE;";

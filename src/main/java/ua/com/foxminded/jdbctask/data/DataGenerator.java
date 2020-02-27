@@ -1,17 +1,14 @@
 package ua.com.foxminded.jdbctask.data;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 import ua.com.foxminded.jdbctask.menu.Dialog;
@@ -21,8 +18,14 @@ import ua.com.foxminded.jdbctask.models.Student;
 
 
 public class DataGenerator {
-    private static final String DB_PROPERTIES_PATH = "src/main/resources/config.properties";
     private static final Random random = new Random();
+    private static final List<String> dropAllTables = new ArrayList<>();
+    static {
+        dropAllTables.add(SqlQueryConstants.DROP_GROUPS_TABLE);
+        dropAllTables.add(SqlQueryConstants.DROP_STUDENTS_TABLE);
+        dropAllTables.add(SqlQueryConstants.DROP_COURSES_TABLE);
+        dropAllTables.add(SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE);
+    }
    
     public void generateData() {
         DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
@@ -43,36 +46,12 @@ public class DataGenerator {
             System.out.println(Dialog.CONTACT_SUPPORT);
         }
     }
-
-    public Connection getConnection() throws IOException, SQLException, ClassNotFoundException {
-        Connection connection = null;
-        String jdbcDriver = null;
-        String dbUrl = null;
-        String user = null;
-        String password = null;
-        try (InputStream input = new FileInputStream(DB_PROPERTIES_PATH)) {
-            Properties properties = new Properties();
-            properties.load(input);
-            jdbcDriver = properties.getProperty("jdbcDriver");
-            dbUrl = properties.getProperty("dbUrl");
-            user = properties.getProperty("dbUser");
-            password = properties.getProperty("dbPassword");
-        }
-        boolean credentialsNotNull = (jdbcDriver != null) && (dbUrl != null) && (user != null) && (password != null);
-        if (credentialsNotNull) {
-            Class.forName(jdbcDriver);    
-            connection = DriverManager.getConnection(dbUrl, user, password);
-        } else {
-            throw new NullPointerException();
-        }
-        return connection;
-    }
     
     private void createTables(Connection connection) throws SQLException, IOException {
         try (Statement stmt = connection.createStatement()) {
-            String dropAllTables = SqlQueryConstants.DROP_GROUPS_TABLE + SqlQueryConstants.DROP_STUDENTS_TABLE
-                    + SqlQueryConstants.DROP_COURSES_TABLE + SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE;
-            stmt.executeUpdate(dropAllTables);
+            for(String dropTable: dropAllTables) {
+                stmt.executeUpdate(dropTable);
+            }
             for (int i = 0; i < SqlQueryConstants.NUMBER_OF_TABLES; i++) {
                 String createTable = fileToString(SqlQueryConstants.TABLES_TO_CREATE_PATHS[i]);
                 stmt.executeUpdate(createTable);
