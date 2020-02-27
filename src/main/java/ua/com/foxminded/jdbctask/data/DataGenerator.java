@@ -52,10 +52,8 @@ public class DataGenerator {
             for(String dropTable: dropAllTables) {
                 stmt.executeUpdate(dropTable);
             }
-            for (int i = 0; i < SqlQueryConstants.NUMBER_OF_TABLES; i++) {
-                String createTable = fileToString(SqlQueryConstants.TABLES_TO_CREATE_PATHS[i]);
-                stmt.executeUpdate(createTable);
-            }
+            String createAllTables = fileToString(SqlQueryConstants.CREATE_ALL_TABLES_PATH);
+            stmt.executeUpdate(createAllTables);
         }
     }
     

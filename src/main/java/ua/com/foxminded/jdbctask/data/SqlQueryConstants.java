@@ -1,19 +1,13 @@
 package ua.com.foxminded.jdbctask.data;
 
 public interface SqlQueryConstants {
-    static final int NUMBER_OF_TABLES = 4;
     
     static final String DROP_GROUPS_TABLE = "DROP TABLE IF EXISTS groups CASCADE;";
     static final String DROP_COURSES_TABLE = "DROP TABLE IF EXISTS courses CASCADE;";
     static final String DROP_STUDENTS_TABLE = "DROP TABLE IF EXISTS students CASCADE;";
     static final String DROP_STUDENTS_COURSES_TABLE = "DROP TABLE IF EXISTS students_courses CASCADE";
 
-    static final String CREATE_GROUPS_TABLE_PATH = "/create_groups_table.sql";
-    static final String CREATE_COURSES_TABLE_PATH = "/create_courses_table.sql";
-    static final String CREATE_STUDENTS_TABLE_PATH = "/create_students_table.sql";
-    static final String CREATE_STUDENTS_COURSES_TABLE_PATH = "/create_students_courses_table.sql";
-    static final String[] TABLES_TO_CREATE_PATHS = { CREATE_GROUPS_TABLE_PATH, CREATE_COURSES_TABLE_PATH,
-            CREATE_STUDENTS_TABLE_PATH, CREATE_STUDENTS_COURSES_TABLE_PATH };
+    static final String CREATE_ALL_TABLES_PATH = "/create_all_tables.sql";
 
     static final String INSERT_STUDENT = "INSERT INTO students(first_name, last_name) VALUES (?, ?);";
     static final String INSERT_GROUP = "INSERT INTO groups VALUES (?, ?);";
