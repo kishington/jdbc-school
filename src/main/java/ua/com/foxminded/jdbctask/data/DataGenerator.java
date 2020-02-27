@@ -15,9 +15,9 @@ import java.util.Properties;
 import java.util.Random;
 
 import ua.com.foxminded.jdbctask.menu.Dialog;
-import ua.com.foxminded.jdbctask.university.Course;
-import ua.com.foxminded.jdbctask.university.Group;
-import ua.com.foxminded.jdbctask.university.Student;
+import ua.com.foxminded.jdbctask.models.Course;
+import ua.com.foxminded.jdbctask.models.Group;
+import ua.com.foxminded.jdbctask.models.Student;
 
 
 public class DataGenerator {
@@ -25,7 +25,8 @@ public class DataGenerator {
     private static final Random random = new Random();
    
     public void generateData() {
-        try (Connection connection = getConnection()) {
+        DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
+        try (Connection connection = connectionGetter.getConnection()) {
             createTables(connection);
             insertGroups(connection);
             insertStudents(connection);
@@ -44,6 +45,7 @@ public class DataGenerator {
     }
 
     public Connection getConnection() throws IOException, SQLException, ClassNotFoundException {
+        Connection connection = null;
         String jdbcDriver = null;
         String dbUrl = null;
         String user = null;
@@ -57,7 +59,6 @@ public class DataGenerator {
             password = properties.getProperty("dbPassword");
         }
         boolean credentialsNotNull = (jdbcDriver != null) && (dbUrl != null) && (user != null) && (password != null);
-        Connection connection = null;
         if (credentialsNotNull) {
             Class.forName(jdbcDriver);    
             connection = DriverManager.getConnection(dbUrl, user, password);
@@ -82,7 +83,7 @@ public class DataGenerator {
     private void insertGroups(Connection connection) throws SQLException {
         Group group = new Group();
         try (PreparedStatement insertGroup = connection.prepareStatement(SqlQueryConstants.INSERT_GROUP)) {
-            for (int groupId = 0; groupId < Assigner.getNumberOfGroups(); groupId++) {
+            for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
                 setRandomGroupName(group);
                 String groupName = group.getName();
                 insertGroup.setInt(1, groupId);
@@ -99,7 +100,7 @@ public class DataGenerator {
                 .prepareStatement(SqlQueryConstants.INSERT_ASSIGNED_STUDENT);
                 PreparedStatement insertNotAssignedStudent = connection
                         .prepareStatement(SqlQueryConstants.INSERT_NOT_ASSIGNED_STUDENT)) {
-            for (int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
+            for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
                 String firstName = getRandomFirstName();
                 String lastName = getRandomLastName();
                 boolean studentAssignedToGroup = studentsToGroupsDistribution[studentId][0] == Assigner.STUDENT_ASSIGNED;
@@ -138,7 +139,7 @@ public class DataGenerator {
         int[][] studentsCourses = assigner.assignCoursesToStudents();
         try (PreparedStatement insertStudentCourseRelation = connection
                 .prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
-            for (int studentId = 0; studentId < Assigner.getNumberOfStudents(); studentId++) {
+            for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
                 int[] coursesIds = studentsCourses[studentId];
                 int numberOfCourses = coursesIds.length;
                 insertStudentCourseRelation.setInt(1, studentId);

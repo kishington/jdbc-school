@@ -1,4 +1,4 @@
-package ua.com.foxminded.jdbctask.university;
+package ua.com.foxminded.jdbctask.models;
 
 public class Group {
     private String name;

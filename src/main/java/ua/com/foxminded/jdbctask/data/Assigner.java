@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import ua.com.foxminded.jdbctask.university.Course;
+import ua.com.foxminded.jdbctask.models.Course;
 
 public class Assigner {
     private static final int GROUP_SIZE_LOWER_LIMIT = 10;
     private static final int GROUP_SIZE_UPPER_LIMIT = 30;
-    private static final int NUMBER_OF_GROUPS = 10;
-    private static final int NUMBER_OF_STUDENTS = 200;
     private static final int MIN_NUMBER_OF_COURSES = 1;
     private static final int MAX_NUMBER_OF_COURSES = 3;
+   
     static final int STUDENT_ASSIGNED = 1;
+    static final int NUMBER_OF_GROUPS = 10;
+    static final int NUMBER_OF_STUDENTS = 200;
     
     private static Random random = new Random();
     
@@ -66,7 +67,7 @@ public class Assigner {
         return studentDistribution;
     }
     
-    int[] permuteRandomly(int n) {
+    private int[] permuteRandomly(int n) {
         int[] permutation = new int[n];
         for(int i = 0; i < n; i++) {
             permutation[i] = i;
@@ -78,13 +79,5 @@ public class Assigner {
             permutation[index] = temp;
         }
         return permutation;
-    }
-    
-    public static int getNumberOfGroups() {
-        return NUMBER_OF_GROUPS;
-    }
-    
-    public static int getNumberOfStudents() {
-        return NUMBER_OF_STUDENTS;
     }
 }

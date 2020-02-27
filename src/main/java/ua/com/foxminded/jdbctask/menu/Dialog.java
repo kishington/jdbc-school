@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Scanner;
 
 import ua.com.foxminded.jdbctask.data.DataGenerator;
+import ua.com.foxminded.jdbctask.data.DatabaseConnectionGetter;
 import ua.com.foxminded.jdbctask.data.Querier;
-import ua.com.foxminded.jdbctask.university.Course;
+import ua.com.foxminded.jdbctask.models.Course;
 
 public class Dialog {
     public static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
@@ -30,12 +31,12 @@ public class Dialog {
     private static final String WANT_TO_CONTINUE =  "Do you want to continue (yes/no)?";
     private static final String BYE = "Thank you!\nBye!";
 
-    private Querier querier = new Querier();
-    private static DataGenerator dataGenerator = new DataGenerator();    
+    private Querier querier = new Querier();   
+    DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
-        try (Connection connection = dataGenerator.getConnection()) {
+        try (Connection connection = connectionGetter.getConnection()) {
             showMainMenu(connection, scanner);
         } catch (SQLException e) {
             System.out.println(DB_ACCSESS_PROBLEM);

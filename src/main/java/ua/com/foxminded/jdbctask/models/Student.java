@@ -1,4 +1,4 @@
-package ua.com.foxminded.jdbctask.university;
+package ua.com.foxminded.jdbctask.models;
 
 import java.util.ArrayList;
 import java.util.List;

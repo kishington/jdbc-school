@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ua.com.foxminded.jdbctask.university.Course;
+import ua.com.foxminded.jdbctask.models.Course;
 
 public class Querier {
    
@@ -146,7 +146,7 @@ public class Querier {
                 }
             }
         }
-        for(int groupId = 0; groupId < Assigner.getNumberOfGroups(); groupId++) {
+        for(int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
             if (!groupsWithStudents.contains(groupId)) {
                 groupsWithoutStudents.add(groupId);
             }
