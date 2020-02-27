@@ -12,6 +12,11 @@ import ua.com.foxminded.jdbctask.data.Querier;
 import ua.com.foxminded.jdbctask.university.Course;
 
 public class Dialog {
+    public static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
+    public static final String FILE_ACCSESS_PROBLEM = "Sorry, problem with file access.";
+    public static final String PROGRAM_ERROR = "Program error!";
+    public static final String CONTACT_SUPPORT = "Try to reload the program or contact support.";
+    
     private static final String MAIN_MENU = "Choose one of the following:\n"
             + "a. Find all groups with less or equals student count\n"
             + "b. Find all students related to course with given name\n" 
@@ -21,9 +26,6 @@ public class Dialog {
             + "g. Exit the program";
     private static final String NO_SUCH_MENU = "No such menu available.";
     private static final String WANT_TO_CONTINUE =  "Do you want to continue (yes/no)?";
-    private static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
-    private static final String FILE_ACCSESS_PROBLEM = "Sorry, problem with file access.";
-    private static final String CONTACT_SUPPORT = "Try to reload the program of contact support.";
     private static final String BYE = "Thank you!\nBye!";
 
     private Querier querier = new Querier();
@@ -31,7 +33,7 @@ public class Dialog {
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
-        try(Connection connection = dataGenerator.getConnection()) {
+        try (Connection connection = dataGenerator.getConnection()) {
             showMainMenu(connection, scanner);
         } catch (SQLException e) {
             System.out.println(DB_ACCSESS_PROBLEM);
@@ -39,12 +41,15 @@ public class Dialog {
         } catch (IOException e) {
             System.out.println(FILE_ACCSESS_PROBLEM);
             System.out.println(CONTACT_SUPPORT);
+        } catch (Exception e) {
+            System.out.println(PROGRAM_ERROR);
+            System.out.println(CONTACT_SUPPORT);
         } finally {
             scanner.close();
         }
     }
     
-    private void showMainMenu(Connection connection, Scanner scanner) {
+    private void showMainMenu(Connection connection, Scanner scanner) throws Exception {
         boolean wantExitProgram = false;
         String option = MAIN_MENU;
         while(!wantExitProgram) {
@@ -195,7 +200,30 @@ public class Dialog {
         }
     }
     
-    private String removeStudentFromCourse(Connection connection, Scanner scanner) {
+    private void displayStudentFromCourseRemovalResult(int removalResult) throws Exception {
+        switch (removalResult) {
+            case Querier.COURSE_NOT_AVAILABLE :
+                System.out.println("No such course is available.");
+                break;
+            case Querier.STUDENT_NOT_ASSIGNED_TO_COURSE :
+                System.out.println("The student is not assigned to this course.");
+                break;   
+            case Querier.STUDENT_REMOVED_FROM_COURSE :
+                System.out.println("The student has been removed from selected course.");
+                break;
+             default:
+                 throw new Exception();
+                
+//            case Querier.STUDENT_ALREADY_ASSIGNED :
+//                System.out.println("Student is already assigned to this course.");
+//                break;
+//            case Querier.STUDENT_ASSIGNED_SUCCESSFULLY :
+//                System.out.println("The student has been assigned to selected course.");
+//                break;
+        }
+    }
+    
+    private String removeStudentFromCourse(Connection connection, Scanner scanner) throws Exception {
         System.out.println("Enter student_id: ");
         try {
             int studentId = scanner.nextInt();
@@ -208,14 +236,9 @@ public class Dialog {
                 scanner.nextLine();
                 displayAvailableCourses();
                 String courseName = scanner.nextLine();
-                List<String> availableCourses = Course.getAvailableCourses();
-                if(!availableCourses.contains(courseName)) {
-                    System.out.println("No such course is available.");
-                    return askToContinueProgram(scanner);
-                } else {
-                    querier.removeStudentFromCourse(connection, studentId, courseName);
-                    return askToContinueProgram(scanner);
-                }
+                int removalResult = querier.removeStudentFromCourse(connection, studentId, courseName);
+                displayStudentFromCourseRemovalResult(removalResult);
+                return askToContinueProgram(scanner);
             }
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Integer number expected.");

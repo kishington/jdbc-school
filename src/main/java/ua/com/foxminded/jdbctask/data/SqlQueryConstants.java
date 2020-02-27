@@ -1,6 +1,6 @@
 package ua.com.foxminded.jdbctask.data;
 
-public class SqlQueryConstants {
+public abstract class SqlQueryConstants {
     static final int NUMBER_OF_TABLES = 4;
     
     static final String DROP_GROUPS_TABLE = "DROP TABLE IF EXISTS groups CASCADE;";
@@ -95,8 +95,4 @@ public class SqlQueryConstants {
             "    students_courses\n" + 
             "WHERE\n" + 
             "    student_id = ?;";
-    
-    private SqlQueryConstants() {
-        throw new IllegalStateException("Utility class");
-    }
 }

@@ -14,9 +14,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import ua.com.foxminded.jdbctask.menu.Dialog;
 import ua.com.foxminded.jdbctask.university.Course;
 import ua.com.foxminded.jdbctask.university.Group;
 import ua.com.foxminded.jdbctask.university.Student;
+
 
 public class DataGenerator {
     private static final String DB_PROPERTIES_PATH = "src/main/resources/config.properties";
@@ -29,6 +31,12 @@ public class DataGenerator {
             insertStudents(connection);
             insertCourses(connection);
             insertStudentsToCoursesRelations(connection);
+        } catch (SQLException e) {
+            System.out.println(Dialog.DB_ACCSESS_PROBLEM);
+            System.out.println(Dialog.CONTACT_SUPPORT);
+        } catch (IOException e) {
+            System.out.println(Dialog.FILE_ACCSESS_PROBLEM);
+            System.out.println(Dialog.CONTACT_SUPPORT);
         }
     }
 
