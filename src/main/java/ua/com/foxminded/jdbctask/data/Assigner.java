@@ -7,14 +7,13 @@ import java.util.Random;
 import ua.com.foxminded.jdbctask.models.Course;
 
 public class Assigner {
-    private static final int GROUP_SIZE_LOWER_LIMIT = 10;
-    private static final int GROUP_SIZE_UPPER_LIMIT = 30;
-    private static final int MIN_NUMBER_OF_COURSES = 1;
-    private static final int MAX_NUMBER_OF_COURSES = 3;
-   
-    static final int STUDENT_ASSIGNED = 1;
+    static final int GROUP_SIZE_LOWER_LIMIT = 10;
+    static final int GROUP_SIZE_UPPER_LIMIT = 30;
+    static final int MIN_NUMBER_OF_COURSES = 1;
+    static final int MAX_NUMBER_OF_COURSES = 3;
     static final int NUMBER_OF_GROUPS = 10;
     static final int NUMBER_OF_STUDENTS = 200;
+    static final int STUDENT_ASSIGNED = 1;
     
     private static Random random = new Random();
     
