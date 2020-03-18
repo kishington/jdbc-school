@@ -18,6 +18,7 @@ import ua.com.foxminded.jdbctask.models.Student;
 
 
 public class DataGenerator {
+    public static final String DATA_GENERATED = "Data generated successfully.";
     private static final Random random = new Random();
     private static final List<String> dropAllTables = new ArrayList<>();
     static {
@@ -27,7 +28,7 @@ public class DataGenerator {
         dropAllTables.add(SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE);
     }
    
-    public void generateData() {
+    public String generateData() {
         DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
         try (Connection connection = connectionGetter.getConnection()) {
             createTables(connection);
@@ -36,15 +37,13 @@ public class DataGenerator {
             insertCourses(connection);
             insertStudentsToCoursesRelations(connection);
         } catch (SQLException e) {
-            System.out.println(Dialog.DB_ACCSESS_PROBLEM);
-            System.out.println(Dialog.CONTACT_SUPPORT);
+            return Dialog.DB_ACCSESS_PROBLEM;
         } catch (IOException e) {
-            System.out.println(Dialog.FILE_ACCSESS_PROBLEM);
-            System.out.println(Dialog.CONTACT_SUPPORT);
+            return Dialog.FILE_ACCSESS_PROBLEM;
         } catch (Exception e) {
-            System.out.println(Dialog.PROGRAM_ERROR);
-            System.out.println(Dialog.CONTACT_SUPPORT);
+            return Dialog.PROGRAM_ERROR;
         }
+        return DATA_GENERATED;
     }
     
     private void createTables(Connection connection) throws SQLException, IOException {

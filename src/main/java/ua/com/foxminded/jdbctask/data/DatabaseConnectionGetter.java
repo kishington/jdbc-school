@@ -1,15 +1,15 @@
 package ua.com.foxminded.jdbctask.data;
 
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseConnectionGetter {
-    private static final String DB_PROPERTIES_PATH = "src/main/resources/config.properties";
+    private static final String DB_PROPERTIES_PATH = "/config.properties";
     
     public Connection getConnection() throws IOException, SQLException, ClassNotFoundException {
         Connection connection = null;
@@ -17,7 +17,7 @@ public class DatabaseConnectionGetter {
         String dbUrl = null;
         String user = null;
         String password = null;
-        try (InputStream input = new FileInputStream(DB_PROPERTIES_PATH)) {
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(DB_PROPERTIES_PATH)))) {
             Properties properties = new Properties();
             properties.load(input);
             jdbcDriver = properties.getProperty("jdbcDriver");

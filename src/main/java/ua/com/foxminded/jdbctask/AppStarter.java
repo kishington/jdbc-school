@@ -7,9 +7,9 @@ public class AppStarter {
 
     public static void main(String[] args) {
         DataGenerator dataGenerator = new DataGenerator();
-        dataGenerator.generateData();
+        String dataGenerationResult = dataGenerator.generateData();
         
         Dialog dialog = new Dialog();
-        dialog.start();
+        dialog.start(dataGenerationResult);
     }
 }
