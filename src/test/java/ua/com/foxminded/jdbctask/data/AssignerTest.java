@@ -14,7 +14,7 @@ class AssignerTest {
         int[][] studentsCourses = assigner.assignCoursesToStudents();
         for (int studentId = 0; studentId < studentsCourses.length; studentId++) {
             int numberOfCourses = studentsCourses[studentId].length;
-            assertTrue(numberOfCourses >= Assigner.MIN_NUMBER_OF_COURSES);
+            assertTrue(numberOfCourses >= Constants.MIN_NUMBER_OF_COURSES);
         }
     }
 
@@ -23,7 +23,7 @@ class AssignerTest {
         int[][] studentsCourses = assigner.assignCoursesToStudents();
         for (int studentId = 0; studentId < studentsCourses.length; studentId++) {
             int numberOfCourses = studentsCourses[studentId].length;
-            assertTrue(numberOfCourses <= Assigner.MAX_NUMBER_OF_COURSES);
+            assertTrue(numberOfCourses <= Constants.MAX_NUMBER_OF_COURSES);
         }
     }
 
@@ -43,10 +43,10 @@ class AssignerTest {
     @Test
     void testAssignStudentsToGroups_GroupSizeNotLessThanMin() {
         int[][] studentDistribution = assigner.assignStudentsToGroups();
-        for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 0; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
             int numberOfStudentsInGroup = countStudentsInGroup(studentDistribution, groupId);
             if (numberOfStudentsInGroup != 0) {
-                assertTrue(numberOfStudentsInGroup >= Assigner.GROUP_SIZE_LOWER_LIMIT);
+                assertTrue(numberOfStudentsInGroup >= Constants.GROUP_SIZE_LOWER_LIMIT);
             }
         }
     }
@@ -54,10 +54,10 @@ class AssignerTest {
     @Test
     void testAssignStudentsToGroups_GroupSizeNotMoreThanMax() {
         int[][] studentDistribution = assigner.assignStudentsToGroups();
-        for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 0; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
             int numberOfStudentsInGroup = countStudentsInGroup(studentDistribution, groupId);
             if (numberOfStudentsInGroup != 0) {
-                assertTrue(numberOfStudentsInGroup <= Assigner.GROUP_SIZE_UPPER_LIMIT);
+                assertTrue(numberOfStudentsInGroup <= Constants.GROUP_SIZE_UPPER_LIMIT);
             }
         }
     }
@@ -65,19 +65,19 @@ class AssignerTest {
     @Test
     void testAssignStudentsToGroups_GroupIdIsValid() {
         int[][] studentDistribution = assigner.assignStudentsToGroups();
-        for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
-            boolean studentAssigned = studentDistribution[studentId][0] == Assigner.STUDENT_ASSIGNED;
+        for (int studentId = 0; studentId < Constants.NUMBER_OF_STUDENTS; studentId++) {
+            boolean studentAssigned = studentDistribution[studentId][0] == Constants.STUDENT_ASSIGNED;
             if (studentAssigned) {
                 int groupId = studentDistribution[studentId][1];
-                assertTrue(groupId < Assigner.NUMBER_OF_GROUPS);
+                assertTrue(groupId < Constants.NUMBER_OF_GROUPS);
             }
         }
     }
 
     private int countStudentsInGroup(int[][] studentDistribution, int groupId) {
         int numberOfStudentsInGroup = 0;
-        for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
-            boolean studentAssignedToGivenGroup = (studentDistribution[studentId][0] == Assigner.STUDENT_ASSIGNED)
+        for (int studentId = 0; studentId < Constants.NUMBER_OF_STUDENTS; studentId++) {
+            boolean studentAssignedToGivenGroup = (studentDistribution[studentId][0] == Constants.STUDENT_ASSIGNED)
                     && (studentDistribution[studentId][1] == groupId);
             if (studentAssignedToGivenGroup) {
                 numberOfStudentsInGroup++;

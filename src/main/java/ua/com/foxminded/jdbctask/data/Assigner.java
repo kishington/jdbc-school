@@ -7,22 +7,15 @@ import java.util.Random;
 import ua.com.foxminded.jdbctask.models.Course;
 
 public class Assigner {
-    static final int GROUP_SIZE_LOWER_LIMIT = 10;
-    static final int GROUP_SIZE_UPPER_LIMIT = 30;
-    static final int MIN_NUMBER_OF_COURSES = 1;
-    static final int MAX_NUMBER_OF_COURSES = 3;
-    static final int NUMBER_OF_GROUPS = 10;
-    static final int NUMBER_OF_STUDENTS = 200;
-    static final int STUDENT_ASSIGNED = 1;
-
+    
     private static Random random = new Random();
 
     int[][] assignCoursesToStudents() {
-        int[][] studentsCourses = new int[NUMBER_OF_STUDENTS][];
+        int[][] studentsCourses = new int[Constants.NUMBER_OF_STUDENTS][];
         List<Integer> coursesAssigned = new ArrayList<>();
-        for (int studentId = 0; studentId < NUMBER_OF_STUDENTS; studentId++) {
-            int numberOfCourses = MIN_NUMBER_OF_COURSES
-                    + random.nextInt(MAX_NUMBER_OF_COURSES - MIN_NUMBER_OF_COURSES + 1);
+        for (int studentId = 0; studentId < Constants.NUMBER_OF_STUDENTS; studentId++) {
+            int numberOfCourses = Constants.MIN_NUMBER_OF_COURSES
+                    + random.nextInt(Constants.MAX_NUMBER_OF_COURSES - Constants.MIN_NUMBER_OF_COURSES + 1);
             int[] coursesIds = new int[numberOfCourses];
             coursesAssigned.clear();
             for (int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
@@ -39,27 +32,27 @@ public class Assigner {
     }
 
     int[][] assignStudentsToGroups() {
-        int[] randomPermutation = permuteRandomly(NUMBER_OF_STUDENTS);
-        int[][] studentDistribution = new int[NUMBER_OF_STUDENTS][2];
+        int[] randomPermutation = permuteRandomly(Constants.NUMBER_OF_STUDENTS);
+        int[][] studentDistribution = new int[Constants.NUMBER_OF_STUDENTS][2];
 
-        int numberOfStudentsLeft = NUMBER_OF_STUDENTS;
+        int numberOfStudentsLeft = Constants.NUMBER_OF_STUDENTS;
         int startStudentNumber = 0;
-        for (int groupId = 0; groupId < NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 0; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
             int numberOfStudentsInGroup;
-            if (numberOfStudentsLeft < GROUP_SIZE_LOWER_LIMIT) {
+            if (numberOfStudentsLeft < Constants.GROUP_SIZE_LOWER_LIMIT) {
                 break;
             } else {
-                if (numberOfStudentsLeft >= GROUP_SIZE_UPPER_LIMIT) {
-                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT + random.nextInt(GROUP_SIZE_UPPER_LIMIT - GROUP_SIZE_LOWER_LIMIT + 1);
+                if (numberOfStudentsLeft >= Constants.GROUP_SIZE_UPPER_LIMIT) {
+                    numberOfStudentsInGroup = Constants.GROUP_SIZE_LOWER_LIMIT + random.nextInt(Constants.GROUP_SIZE_UPPER_LIMIT - Constants.GROUP_SIZE_LOWER_LIMIT + 1);
                     numberOfStudentsLeft -= numberOfStudentsInGroup;
                 } else {
-                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT + random.nextInt(numberOfStudentsLeft - GROUP_SIZE_LOWER_LIMIT + 1);
+                    numberOfStudentsInGroup = Constants.GROUP_SIZE_LOWER_LIMIT + random.nextInt(numberOfStudentsLeft - Constants.GROUP_SIZE_LOWER_LIMIT + 1);
                     numberOfStudentsLeft -= numberOfStudentsInGroup;
                 }
             }
             for (int studentNumber = startStudentNumber; studentNumber < startStudentNumber + numberOfStudentsInGroup; studentNumber++) {
                 int studentId = randomPermutation[studentNumber];
-                studentDistribution[studentId][0] = STUDENT_ASSIGNED;
+                studentDistribution[studentId][0] = Constants.STUDENT_ASSIGNED;
                 studentDistribution[studentId][1] = groupId;
             }
             startStudentNumber += numberOfStudentsInGroup;

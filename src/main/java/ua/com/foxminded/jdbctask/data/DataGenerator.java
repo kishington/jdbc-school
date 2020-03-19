@@ -17,7 +17,7 @@ import ua.com.foxminded.jdbctask.models.Group;
 import ua.com.foxminded.jdbctask.models.Student;
 
 public class DataGenerator {
-    public static final String DATA_GENERATION_FAIL = "Exception during data generation.";
+    private static final String DATA_GENERATION_FAIL = "Exception during data generation.";
     private static final Random random = new Random();
     private static final List<String> dropAllTables = new ArrayList<>();
     static {
@@ -53,7 +53,7 @@ public class DataGenerator {
     private void insertGroups(Connection connection) throws SQLException {
         Group group = new Group();
         try (PreparedStatement insertGroup = connection.prepareStatement(SqlQueryConstants.INSERT_GROUP)) {
-            for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
+            for (int groupId = 0; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
                 setRandomGroupName(group);
                 String groupName = group.getName();
                 insertGroup.setInt(1, groupId);
@@ -68,10 +68,10 @@ public class DataGenerator {
         int[][] studentsToGroupsDistribution = assigner.assignStudentsToGroups();
         try (PreparedStatement insertAssignedStudent = connection.prepareStatement(SqlQueryConstants.INSERT_ASSIGNED_STUDENT);
              PreparedStatement insertNotAssignedStudent = connection.prepareStatement(SqlQueryConstants.INSERT_NOT_ASSIGNED_STUDENT)) {
-            for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
+            for (int studentId = 0; studentId < Constants.NUMBER_OF_STUDENTS; studentId++) {
                 String firstName = getRandomFirstName();
                 String lastName = getRandomLastName();
-                boolean studentAssignedToGroup = studentsToGroupsDistribution[studentId][0] == Assigner.STUDENT_ASSIGNED;
+                boolean studentAssignedToGroup = studentsToGroupsDistribution[studentId][0] == Constants.STUDENT_ASSIGNED;
                 if (studentAssignedToGroup) {
                     int groupId = studentsToGroupsDistribution[studentId][1];
                     insertAssignedStudent.setInt(1, studentId);
@@ -107,7 +107,7 @@ public class DataGenerator {
         int[][] studentsCourses = assigner.assignCoursesToStudents();
         try (PreparedStatement insertStudentCourseRelation = connection
                 .prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
-            for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
+            for (int studentId = 0; studentId < Constants.NUMBER_OF_STUDENTS; studentId++) {
                 int[] coursesIds = studentsCourses[studentId];
                 int numberOfCourses = coursesIds.length;
                 insertStudentCourseRelation.setInt(1, studentId);

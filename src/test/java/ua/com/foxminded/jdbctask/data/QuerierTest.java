@@ -41,22 +41,22 @@ class QuerierTest {
 
     @Test
     void testRemoveStudentFromCourse_courseNotAvailable() throws SQLException {
-        int expected = Querier.COURSE_NOT_AVAILABLE;
+        int expected = Constants.COURSE_NOT_AVAILABLE;
         int actual = querier.removeStudentFromCourse(connection, 0, "Chess");
         assertEquals(expected, actual);
     }
 
     @Test
     void testRemoveStudentFromCourse_removalSuccess() throws SQLException {
-        querier.assignStudentToCourse(connection, 0, "Biology");
-        int expected = Querier.STUDENT_REMOVED_FROM_COURSE;
+        assignStudentToCourse(connection, 0, 1);
+        int expected = Constants.STUDENT_REMOVED_FROM_COURSE;
         int actual = querier.removeStudentFromCourse(connection, 0, "Biology");
         assertEquals(expected, actual);
     }
 
     @Test
     void testAssignStudentToCourse_courseNotAvailable() throws SQLException {
-        int expected = Querier.COURSE_NOT_AVAILABLE;
+        int expected = Constants.COURSE_NOT_AVAILABLE;
         int actual = querier.assignStudentToCourse(connection, 0, "Chess");
         assertEquals(expected, actual);
     }
@@ -64,7 +64,7 @@ class QuerierTest {
     @Test
     void testAssignStudentToCourse_alreadyAssigned() throws SQLException {
         querier.assignStudentToCourse(connection, 0, "Biology");
-        int expected = Querier.STUDENT_ALREADY_ASSIGNED;
+        int expected = Constants.STUDENT_ALREADY_ASSIGNED;
         int actual = querier.assignStudentToCourse(connection, 0, "Biology");
         assertEquals(expected, actual);
     }
@@ -82,9 +82,9 @@ class QuerierTest {
 
     @Test
     void testGetStudentCourses() throws SQLException {
-        querier.assignStudentToCourse(connection, 5, "Zoology");
-        querier.assignStudentToCourse(connection, 5, "Physics");
-        querier.assignStudentToCourse(connection, 5, "Physiology");
+        assignStudentToCourse(connection, 5, 2);
+        assignStudentToCourse(connection, 5, 4);
+        assignStudentToCourse(connection, 5, 8);
         List<Integer> studentCourses = querier.getStudentCourses(connection, 5);
         assertTrue(studentCourses.contains(2));
         assertTrue(studentCourses.contains(4));
@@ -122,7 +122,10 @@ class QuerierTest {
 
     @Test
     void testIsStudentAvailable_whenHeIsNot() throws SQLException {
-        querier.deleteStudent(connection, 6);
+        String deleteStudent = "DELETE FROM students WHERE student_id = 6;";
+        try (PreparedStatement statement = connection.prepareStatement(deleteStudent)) {
+            statement.executeUpdate();
+        }
         boolean studentAvailable = querier.isStudentAvailable(connection, 6);
         assertFalse(studentAvailable);
     }
@@ -134,17 +137,17 @@ class QuerierTest {
         assignStudentsToGroup(0, 0, 10);
         assignStudentsToGroup(1, 10, 20);
         int fromStudentId = 20;
-        for (int groupId = 2; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 2; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
             int numberOfStudents = 15;
             assignStudentsToGroup(groupId, fromStudentId, fromStudentId + numberOfStudents);
             fromStudentId += numberOfStudents;
         }
 
-        setGroupName("xxxx", 0);
-        setGroupName("xxxx", 1);
+        insertGroupName("xxxx", 0);
+        insertGroupName("xxxx", 1);
 
         String expected = "group id: 0     group name: xxxx       student count: 10   \n"
-                + "group id: 1     group name: xxxx       student count: 10   \n";
+                        + "group id: 1     group name: xxxx       student count: 10   \n";
         String actual = querier.getGroupsStudentCountLessThan(connection, 11);
         assertEquals(expected, actual);
     }
@@ -163,15 +166,15 @@ class QuerierTest {
     @Test
     void testGetGroupIdToNameMap() throws SQLException {
         char groupName = 'a';
-        for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
-            setGroupName(Character.toString(groupName), groupId);
+        for (int groupId = 0; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
+            insertGroupName(Character.toString(groupName), groupId);
             groupName++;
         }
         Map<Integer, String> groupIdToNameMapActual = querier.getGroupIdToNameMap(connection);
 
         Map<Integer, String> groupIdToNameMapExpected = new HashMap<>();
         groupName = 'a';
-        for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 0; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
             groupIdToNameMapExpected.put(groupId, Character.toString(groupName));
             groupName++;
         }
@@ -187,8 +190,8 @@ class QuerierTest {
         }
         int nameTag = 1;
         for (int studentId = 0; studentId < 4; studentId++) {
-            setStudentName(studentId, "Petr" + nameTag, "Petrov" + nameTag);
-            querier.assignStudentToCourse(connection, studentId, "Maths");
+            insertStudentName(studentId, "Petr" + nameTag, "Petrov" + nameTag);
+            assignStudentToCourse(connection, studentId, 0);
             nameTag++;
         }
 
@@ -228,7 +231,7 @@ class QuerierTest {
         }
     }
 
-    private void setGroupName(String groupName, int groupId) throws SQLException {
+    private void insertGroupName(String groupName, int groupId) throws SQLException {
         String setGroupName = "UPDATE groups SET group_name = ? WHERE group_id = ?;";
         try (PreparedStatement statement = connection.prepareStatement(setGroupName)) {
             statement.setString(1, groupName);
@@ -237,13 +240,22 @@ class QuerierTest {
         }
     }
 
-    private void setStudentName(int studentId, String firstName, String lastName) throws SQLException {
+    private void insertStudentName(int studentId, String firstName, String lastName) throws SQLException {
         String setStudentName = "UPDATE students SET first_name = ?, last_name = ? WHERE student_id = ?;";
         try (PreparedStatement statement = connection.prepareStatement(setStudentName)) {
             statement.setString(1, firstName);
             statement.setString(2, lastName);
             statement.setInt(3, studentId);
             statement.executeUpdate();
+        }
+    }
+    
+    private void assignStudentToCourse(Connection connection, int studentId, int courseId) throws SQLException {
+        try (PreparedStatement insertStudentCourseRelation = 
+                connection.prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
+            insertStudentCourseRelation.setInt(1, studentId);
+            insertStudentCourseRelation.setInt(2, courseId);
+            insertStudentCourseRelation.executeUpdate();
         }
     }
 }

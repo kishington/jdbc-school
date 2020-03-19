@@ -13,23 +13,17 @@ import ua.com.foxminded.jdbctask.models.Course;
 
 public class Querier {
 
-    public static final int STUDENT_NOT_ASSIGNED_TO_COURSE = -1;
-    public static final int COURSE_NOT_AVAILABLE = 0;
-    public static final int STUDENT_REMOVED_FROM_COURSE = 1;
-    public static final int STUDENT_ALREADY_ASSIGNED = 2;
-    public static final int STUDENT_ASSIGNED_SUCCESSFULLY = 3;
-
     public int removeStudentFromCourse(Connection connection, int studentId, String courseName) throws SQLException {
         List<Integer> studentCourses = getStudentCourses(connection, studentId);
         List<String> availableCourses = Course.getAvailableCourses();
         boolean courseAvailable = availableCourses.contains(courseName);
         if (!courseAvailable) {
-            return COURSE_NOT_AVAILABLE;
+            return Constants.COURSE_NOT_AVAILABLE;
         } else {
             int courseId = getCourseId(connection, courseName);
             boolean isStudentAssignedToCourse = studentCourses.contains(courseId);
             if (!isStudentAssignedToCourse) {
-                return STUDENT_NOT_ASSIGNED_TO_COURSE;
+                return Constants.STUDENT_NOT_ASSIGNED_TO_COURSE;
             } else {
                 try (PreparedStatement removalOfStudentFromCourse = connection
                         .prepareStatement(SqlQueryConstants.REMOVE_STUDENT_FROM_COURSE)) {
@@ -37,7 +31,7 @@ public class Querier {
                     removalOfStudentFromCourse.setInt(2, courseId);
                     removalOfStudentFromCourse.executeUpdate();
                 }
-                return STUDENT_REMOVED_FROM_COURSE;
+                return Constants.STUDENT_REMOVED_FROM_COURSE;
             }
         }
     }
@@ -46,25 +40,24 @@ public class Querier {
         List<String> availableCourses = Course.getAvailableCourses();
         boolean courseAvailable = availableCourses.contains(courseName);
         if (!courseAvailable) {
-            return COURSE_NOT_AVAILABLE;
+            return Constants.COURSE_NOT_AVAILABLE;
         } else {
             int courseId = getCourseId(connection, courseName);
             List<Integer> studentCourses = getStudentCourses(connection, studentId);
             if (studentCourses.contains(courseId)) {
-                return STUDENT_ALREADY_ASSIGNED;
+                return Constants.STUDENT_ALREADY_ASSIGNED;
             } else {
-                try (PreparedStatement insertStudentCourseRelation = connection
-                        .prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
+                try (PreparedStatement insertStudentCourseRelation = connection.prepareStatement(SqlQueryConstants.INSERT_STUDENT_COURSE_RELATION)) {
                     insertStudentCourseRelation.setInt(1, studentId);
                     insertStudentCourseRelation.setInt(2, courseId);
                     insertStudentCourseRelation.executeUpdate();
                 }
-                return STUDENT_ASSIGNED_SUCCESSFULLY;
+                return Constants.STUDENT_ASSIGNED_SUCCESSFULLY;
             }
         }
     }
 
-    List<Integer> getStudentCourses(Connection connection, int studentId) throws SQLException {
+    public List<Integer> getStudentCourses(Connection connection, int studentId) throws SQLException {
         List<Integer> courses = new ArrayList<>();
         try (PreparedStatement selectStudentsCourses = connection
                 .prepareStatement(SqlQueryConstants.SELECT_STUDENTS_COURSES)) {
@@ -88,9 +81,9 @@ public class Querier {
     }
 
     public void deleteStudent(Connection connection, int studentId) throws SQLException {
-        try (PreparedStatement insterNewStudent = connection.prepareStatement(SqlQueryConstants.DELETE_STUDENT_BY_ID)) {
-            insterNewStudent.setInt(1, studentId);
-            insterNewStudent.executeUpdate();
+        try (PreparedStatement deleteStudent = connection.prepareStatement(SqlQueryConstants.DELETE_STUDENT_BY_ID)) {
+            deleteStudent.setInt(1, studentId);
+            deleteStudent.executeUpdate();
         }
     }
 
@@ -150,7 +143,7 @@ public class Querier {
                 }
             }
         }
-        for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 0; groupId < Constants.NUMBER_OF_GROUPS; groupId++) {
             if (!groupsWithStudents.contains(groupId)) {
                 groupsWithoutStudents.add(groupId);
             }

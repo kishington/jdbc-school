@@ -6,16 +6,15 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import ua.com.foxminded.jdbctask.data.DataGenerator;
+import ua.com.foxminded.jdbctask.data.Constants;
 import ua.com.foxminded.jdbctask.data.DatabaseConnectionGetter;
 import ua.com.foxminded.jdbctask.data.Querier;
 import ua.com.foxminded.jdbctask.models.Course;
 
 public class Dialog {
-    public static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
-    public static final String FILE_ACCSESS_PROBLEM = "Sorry, problem with file access.";
-    public static final String CONTACT_SUPPORT = "Try to reload the program or contact support.";
-    public static final String PROGRAM_ERROR = "Program error!";
+    private static final String DB_ACCSESS_PROBLEM = "Sorry, problem with database access.";
+    private static final String CONTACT_SUPPORT = "Try to reload the program or contact support.";
+    private static final String PROGRAM_ERROR = "Program error!";
     private static final String STUDENT_NOT_IN_DATABASE = "This student is not on the database.";
     private static final String SELECT_COURSE = "Select one of the folowing courses:";
 
@@ -199,13 +198,13 @@ public class Dialog {
 
     private void displayStudentToCourseAssignementResult(int removalResult) {
         switch (removalResult) {
-        case Querier.COURSE_NOT_AVAILABLE:
+        case Constants.COURSE_NOT_AVAILABLE:
             System.out.println(NO_SUCH_COURSE);
             break;
-        case Querier.STUDENT_ALREADY_ASSIGNED:
+        case Constants.STUDENT_ALREADY_ASSIGNED:
             System.out.println("Student is already assigned to this course.");
             break;
-        case Querier.STUDENT_ASSIGNED_SUCCESSFULLY:
+        case Constants.STUDENT_ASSIGNED_SUCCESSFULLY:
             System.out.println("The student has been assigned to selected course.");
             break;
         }
@@ -241,13 +240,13 @@ public class Dialog {
 
     private void displayStudentFromCourseRemovalResult(int removalResult) {
         switch (removalResult) {
-        case Querier.COURSE_NOT_AVAILABLE:
+        case Constants.COURSE_NOT_AVAILABLE:
             System.out.println(NO_SUCH_COURSE);
             break;
-        case Querier.STUDENT_NOT_ASSIGNED_TO_COURSE:
+        case Constants.STUDENT_NOT_ASSIGNED_TO_COURSE:
             System.out.println("The student is not assigned to this course.");
             break;
-        case Querier.STUDENT_REMOVED_FROM_COURSE:
+        case Constants.STUDENT_REMOVED_FROM_COURSE:
             System.out.println("The student has been removed from selected course.");
             break;
         }
