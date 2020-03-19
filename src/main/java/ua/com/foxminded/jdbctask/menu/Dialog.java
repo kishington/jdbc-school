@@ -22,9 +22,11 @@ public class Dialog {
 
     private static final String MAIN_MENU = "Choose one of the following:\n"
             + "a. Find all groups with less or equals student count\n"
-            + "b. Find all students related to course with given name\n" + "c. Add new student\n"
+            + "b. Find all students related to course with given name\n"
+            + "c. Add new student\n"
             + "d. Delete student by student_id\n" + "e. Assign a student to a course (from a list)\n"
-            + "f. Remove the student from one of his or her courses\n" + "g. Exit the program";
+            + "f. Remove the student from one of his or her courses\n"
+            + "g. Exit the program";
     private static final String ENTER_STUDENT_ID = "Enter student_id: ";
     private static final String NO_SUCH_COURSE = "No such course is available.";
     private static final String NO_SUCH_MENU = "No such menu available.";
