@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import ua.com.foxminded.jdbctask.menu.Dialog;
+import jdbctask.exceptions.DataGenerationException;
 import ua.com.foxminded.jdbctask.models.Course;
 import ua.com.foxminded.jdbctask.models.Group;
 import ua.com.foxminded.jdbctask.models.Student;
 
 public class DataGenerator {
-    public static final String DATA_GENERATED = "Data generated successfully.";
+    public static final String DATA_GENERATION_FAIL = "Exception during data generation.";
     private static final Random random = new Random();
     private static final List<String> dropAllTables = new ArrayList<>();
     static {
@@ -27,7 +27,7 @@ public class DataGenerator {
         dropAllTables.add(SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE);
     }
 
-    public String generateData() {
+    public void generateData() throws DataGenerationException {
         DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
         try (Connection connection = connectionGetter.getConnection()) {
             createTables(connection);
@@ -35,14 +35,9 @@ public class DataGenerator {
             insertStudents(connection);
             insertCourses(connection);
             insertStudentsToCoursesRelations(connection);
-        } catch (SQLException e) {
-            return Dialog.DB_ACCSESS_PROBLEM;
-        } catch (IOException e) {
-            return Dialog.FILE_ACCSESS_PROBLEM;
         } catch (Exception e) {
-            return Dialog.PROGRAM_ERROR;
-        }
-        return DATA_GENERATED;
+            throw new DataGenerationException(DATA_GENERATION_FAIL);
+        } 
     }
 
     private void createTables(Connection connection) throws SQLException, IOException {
@@ -69,12 +64,10 @@ public class DataGenerator {
     }
 
     private void insertStudents(Connection connection) throws SQLException {
-        Assigner dataGenerator = new Assigner();
-        int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
-        try (PreparedStatement insertAssignedStudent = connection
-                .prepareStatement(SqlQueryConstants.INSERT_ASSIGNED_STUDENT);
-                PreparedStatement insertNotAssignedStudent = connection
-                        .prepareStatement(SqlQueryConstants.INSERT_NOT_ASSIGNED_STUDENT)) {
+        Assigner assigner = new Assigner();
+        int[][] studentsToGroupsDistribution = assigner.assignStudentsToGroups();
+        try (PreparedStatement insertAssignedStudent = connection.prepareStatement(SqlQueryConstants.INSERT_ASSIGNED_STUDENT);
+             PreparedStatement insertNotAssignedStudent = connection.prepareStatement(SqlQueryConstants.INSERT_NOT_ASSIGNED_STUDENT)) {
             for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {
                 String firstName = getRandomFirstName();
                 String lastName = getRandomLastName();

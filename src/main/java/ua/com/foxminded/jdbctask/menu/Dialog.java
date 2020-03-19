@@ -1,6 +1,5 @@
 package ua.com.foxminded.jdbctask.menu;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
@@ -36,39 +35,21 @@ public class Dialog {
     private Querier querier = new Querier();
     DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
 
-    public void start(String dataGenerationResult) {
-        switch (dataGenerationResult) {
-        case DB_ACCSESS_PROBLEM:
-            System.out.println(Dialog.DB_ACCSESS_PROBLEM);
-            System.out.println(Dialog.CONTACT_SUPPORT);
-            break;
-        case FILE_ACCSESS_PROBLEM:
-            System.out.println(Dialog.FILE_ACCSESS_PROBLEM);
-            System.out.println(Dialog.CONTACT_SUPPORT);
-            break;
-        case PROGRAM_ERROR:
-            System.out.println(Dialog.PROGRAM_ERROR);
-            System.out.println(Dialog.CONTACT_SUPPORT);
-            break;
-        case DataGenerator.DATA_GENERATED:
-            Scanner scanner = new Scanner(System.in);
-            try (Connection connection = connectionGetter.getConnection()) {
-                showMainMenu(connection, scanner);
-            } catch (SQLException e) {
-                System.out.println(DB_ACCSESS_PROBLEM);
-                System.out.println(CONTACT_SUPPORT);
-            } catch (IOException e) {
-                System.out.println(FILE_ACCSESS_PROBLEM);
-                System.out.println(CONTACT_SUPPORT);
-            } catch (Exception e) {
-                System.out.println(PROGRAM_ERROR);
-                System.out.println(CONTACT_SUPPORT);
-            } finally {
-                scanner.close();
-            }
-            break;
+    public void start() {
+        Scanner scanner = new Scanner(System.in);
+        try (Connection connection = connectionGetter.getConnection()) {
+            showMainMenu(connection, scanner);
+        } catch (SQLException e) {
+            System.out.println(DB_ACCSESS_PROBLEM);
+            System.out.println(CONTACT_SUPPORT);
+        } catch (Exception e) {
+            System.out.println(PROGRAM_ERROR);
+            System.out.println(CONTACT_SUPPORT);
+        } finally {
+            scanner.close();
         }
     }
+
 
     private void showMainMenu(Connection connection, Scanner scanner) {
         boolean wantExitProgram = false;

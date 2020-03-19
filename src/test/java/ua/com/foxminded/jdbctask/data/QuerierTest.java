@@ -2,7 +2,6 @@ package ua.com.foxminded.jdbctask.data;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,19 +15,22 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import jdbctask.exceptions.DataGenerationException;
+import jdbctask.exceptions.DatabaseConnectionException;
+
 class QuerierTest {
     private static final Querier querier = new Querier();
     private static final DataGenerator dataGenerator = new DataGenerator();
     private static Connection connection;
 
     @BeforeAll
-    private static void init() throws ClassNotFoundException, NullCredentialsException, SQLException, IOException {
+    private static void init() throws DatabaseConnectionException {
         DatabaseConnectionGetter dbConnGetter = new DatabaseConnectionGetter();
         connection = dbConnGetter.getConnection();
     }
 
     @BeforeEach
-    public void initEach() {
+    public void initEach() throws DataGenerationException {
         dataGenerator.generateData();
     }
 

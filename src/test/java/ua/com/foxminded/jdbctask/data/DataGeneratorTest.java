@@ -2,7 +2,6 @@ package ua.com.foxminded.jdbctask.data;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -10,13 +9,15 @@ import java.sql.SQLException;
 
 import org.junit.jupiter.api.Test;
 
+import jdbctask.exceptions.DataGenerationException;
+import jdbctask.exceptions.DatabaseConnectionException;
+
 class DataGeneratorTest {
     private static final DatabaseConnectionGetter dbConnGetter = new DatabaseConnectionGetter();
     private static final DataGenerator dataGenerator = new DataGenerator();
 
     @Test
-    void testGenerateData_tablesCreated()
-            throws ClassNotFoundException, NullCredentialsException, SQLException, IOException {
+    void testGenerateData_tablesCreated() throws DatabaseConnectionException, SQLException, DataGenerationException {
         Connection connection = dbConnGetter.getConnection();
         dataGenerator.generateData();
         DatabaseMetaData databaseMetaData = connection.getMetaData();

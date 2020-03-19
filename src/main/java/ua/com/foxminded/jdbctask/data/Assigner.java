@@ -50,17 +50,14 @@ public class Assigner {
                 break;
             } else {
                 if (numberOfStudentsLeft >= GROUP_SIZE_UPPER_LIMIT) {
-                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT
-                            + random.nextInt(GROUP_SIZE_UPPER_LIMIT - GROUP_SIZE_LOWER_LIMIT + 1);
+                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT + random.nextInt(GROUP_SIZE_UPPER_LIMIT - GROUP_SIZE_LOWER_LIMIT + 1);
                     numberOfStudentsLeft -= numberOfStudentsInGroup;
                 } else {
-                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT
-                            + random.nextInt(numberOfStudentsLeft - GROUP_SIZE_LOWER_LIMIT + 1);
+                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT + random.nextInt(numberOfStudentsLeft - GROUP_SIZE_LOWER_LIMIT + 1);
                     numberOfStudentsLeft -= numberOfStudentsInGroup;
                 }
             }
-            for (int studentNumber = startStudentNumber; studentNumber < startStudentNumber
-                    + numberOfStudentsInGroup; studentNumber++) {
+            for (int studentNumber = startStudentNumber; studentNumber < startStudentNumber + numberOfStudentsInGroup; studentNumber++) {
                 int studentId = randomPermutation[studentNumber];
                 studentDistribution[studentId][0] = STUDENT_ASSIGNED;
                 studentDistribution[studentId][1] = groupId;

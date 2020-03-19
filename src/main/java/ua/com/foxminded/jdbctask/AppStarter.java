@@ -1,15 +1,16 @@
 package ua.com.foxminded.jdbctask;
 
+import jdbctask.exceptions.DataGenerationException;
 import ua.com.foxminded.jdbctask.data.DataGenerator;
 import ua.com.foxminded.jdbctask.menu.Dialog;
 
 public class AppStarter {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DataGenerationException {
         DataGenerator dataGenerator = new DataGenerator();
-        String dataGenerationResult = dataGenerator.generateData();
+        dataGenerator.generateData();
 
         Dialog dialog = new Dialog();
-        dialog.start(dataGenerationResult);
+        dialog.start();
     }
 }
