@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Course {
+    private Course() {
+
+    }
 
     private static final List<String> courses = new ArrayList<>();
     static {
@@ -18,10 +21,11 @@ public class Course {
         courses.add("Physiology");
         courses.add("Econometrics");
     }
-   
+
     public static List<String> getAvailableCourses() {
         return new ArrayList<>(courses);
     }
+
     public static int getTotalNumberOfAvailableCourses() {
         return courses.size();
     }

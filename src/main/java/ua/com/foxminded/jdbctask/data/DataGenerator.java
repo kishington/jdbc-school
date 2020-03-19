@@ -16,7 +16,6 @@ import ua.com.foxminded.jdbctask.models.Course;
 import ua.com.foxminded.jdbctask.models.Group;
 import ua.com.foxminded.jdbctask.models.Student;
 
-
 public class DataGenerator {
     public static final String DATA_GENERATED = "Data generated successfully.";
     private static final Random random = new Random();
@@ -27,7 +26,7 @@ public class DataGenerator {
         dropAllTables.add(SqlQueryConstants.DROP_COURSES_TABLE);
         dropAllTables.add(SqlQueryConstants.DROP_STUDENTS_COURSES_TABLE);
     }
-   
+
     public String generateData() {
         DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
         try (Connection connection = connectionGetter.getConnection()) {
@@ -45,17 +44,17 @@ public class DataGenerator {
         }
         return DATA_GENERATED;
     }
-    
+
     private void createTables(Connection connection) throws SQLException, IOException {
         try (Statement stmt = connection.createStatement()) {
-            for(String dropTable: dropAllTables) {
+            for (String dropTable : dropAllTables) {
                 stmt.executeUpdate(dropTable);
             }
             String createAllTables = fileToString(SqlQueryConstants.CREATE_ALL_TABLES_PATH);
             stmt.executeUpdate(createAllTables);
         }
     }
-    
+
     private void insertGroups(Connection connection) throws SQLException {
         Group group = new Group();
         try (PreparedStatement insertGroup = connection.prepareStatement(SqlQueryConstants.INSERT_GROUP)) {
@@ -68,7 +67,7 @@ public class DataGenerator {
             }
         }
     }
-  
+
     private void insertStudents(Connection connection) throws SQLException {
         Assigner dataGenerator = new Assigner();
         int[][] studentsToGroupsDistribution = dataGenerator.assignStudentsToGroups();
@@ -96,7 +95,7 @@ public class DataGenerator {
             }
         }
     }
-    
+
     private void insertCourses(Connection connection) throws SQLException {
         try (PreparedStatement insertCourse = connection.prepareStatement(SqlQueryConstants.INSERT_COURSE)) {
             int numberOfCourses = Course.getTotalNumberOfAvailableCourses();
@@ -108,8 +107,8 @@ public class DataGenerator {
                 insertCourse.executeUpdate();
             }
         }
-    } 
-    
+    }
+
     private void insertStudentsToCoursesRelations(Connection connection) throws SQLException {
         Assigner assigner = new Assigner();
         int[][] studentsCourses = assigner.assignCoursesToStudents();
@@ -127,44 +126,44 @@ public class DataGenerator {
             }
         }
     }
-    
+
     private String fileToString(String filePath) throws IOException {
         StringBuilder output = new StringBuilder();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filePath)))) {
             in.lines().forEach(line -> output.append(line + "\n"));
-        } 
+        }
         return output.toString();
     }
-    
+
     private String getRandomFirstName() {
         int index = random.nextInt(Student.firstNames.size());
         return Student.firstNames.get(index);
     }
-    
+
     private String getRandomLastName() {
         int index = random.nextInt(Student.lastNames.size());
         return Student.lastNames.get(index);
     }
-    
+
     private void setRandomGroupName(Group group) {
         final String letters = "abcdefghijklmnopqrstuvwxyz";
         StringBuilder groupName = new StringBuilder();
-        
+
         int index = random.nextInt(letters.length());
         char randomChar = letters.charAt(index);
-        groupName.append(randomChar);        
+        groupName.append(randomChar);
         index = random.nextInt(letters.length());
         randomChar = letters.charAt(index);
         groupName.append(randomChar);
-       
+
         groupName.append('-');
-        
+
         int randomDigit = random.nextInt(10);
         groupName.append(randomDigit);
         randomDigit = random.nextInt(10);
         groupName.append(randomDigit);
-        
+
         String groupNameString = groupName.toString();
         group.setName(groupNameString);
-    } 
+    }
 }

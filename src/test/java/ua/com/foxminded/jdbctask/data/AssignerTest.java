@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import ua.com.foxminded.jdbctask.models.Course;
 
 class AssignerTest {
-    Assigner assigner = new Assigner();
+    private static final Assigner assigner = new Assigner();
 
     @Test
     void testAssignCoursesToStudents_notLessThanMinNumberCoursesAssigned() {
@@ -50,7 +50,7 @@ class AssignerTest {
             }
         }
     }
-    
+
     @Test
     void testAssignStudentsToGroups_GroupSizeNotMoreThanMax() {
         int[][] studentDistribution = assigner.assignStudentsToGroups();
@@ -61,7 +61,7 @@ class AssignerTest {
             }
         }
     }
-    
+
     @Test
     void testAssignStudentsToGroups_GroupIdIsValid() {
         int[][] studentDistribution = assigner.assignStudentsToGroups();
@@ -74,12 +74,6 @@ class AssignerTest {
         }
     }
 
-
-    @Test
-    void testAssignStudentsToGroups_GroupSizeMoreThanMin() {
-
-    }
-    
     private int countStudentsInGroup(int[][] studentDistribution, int groupId) {
         int numberOfStudentsInGroup = 0;
         for (int studentId = 0; studentId < Assigner.NUMBER_OF_STUDENTS; studentId++) {

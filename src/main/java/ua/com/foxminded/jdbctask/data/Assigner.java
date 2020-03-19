@@ -14,21 +14,22 @@ public class Assigner {
     static final int NUMBER_OF_GROUPS = 10;
     static final int NUMBER_OF_STUDENTS = 200;
     static final int STUDENT_ASSIGNED = 1;
-    
+
     private static Random random = new Random();
-    
-    int[][] assignCoursesToStudents() {     
-        int[][] studentsCourses = new int[NUMBER_OF_STUDENTS][];   
-        List<Integer> coursesAssigned = new ArrayList<>();      
+
+    int[][] assignCoursesToStudents() {
+        int[][] studentsCourses = new int[NUMBER_OF_STUDENTS][];
+        List<Integer> coursesAssigned = new ArrayList<>();
         for (int studentId = 0; studentId < NUMBER_OF_STUDENTS; studentId++) {
-            int numberOfCourses = MIN_NUMBER_OF_COURSES + random.nextInt(MAX_NUMBER_OF_COURSES - MIN_NUMBER_OF_COURSES + 1);
+            int numberOfCourses = MIN_NUMBER_OF_COURSES
+                    + random.nextInt(MAX_NUMBER_OF_COURSES - MIN_NUMBER_OF_COURSES + 1);
             int[] coursesIds = new int[numberOfCourses];
             coursesAssigned.clear();
-            for(int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
+            for (int courseNumber = 0; courseNumber < numberOfCourses; courseNumber++) {
                 int courseId;
                 do {
                     courseId = random.nextInt(Course.getTotalNumberOfAvailableCourses());
-                } while(coursesAssigned.contains(courseId));
+                } while (coursesAssigned.contains(courseId));
                 coursesAssigned.add(courseId);
                 coursesIds[courseNumber] = courseId;
             }
@@ -36,27 +37,30 @@ public class Assigner {
         }
         return studentsCourses;
     }
-    
+
     int[][] assignStudentsToGroups() {
         int[] randomPermutation = permuteRandomly(NUMBER_OF_STUDENTS);
         int[][] studentDistribution = new int[NUMBER_OF_STUDENTS][2];
-        
+
         int numberOfStudentsLeft = NUMBER_OF_STUDENTS;
         int startStudentNumber = 0;
-        for(int groupId = 0; groupId < NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 0; groupId < NUMBER_OF_GROUPS; groupId++) {
             int numberOfStudentsInGroup;
             if (numberOfStudentsLeft < GROUP_SIZE_LOWER_LIMIT) {
                 break;
             } else {
-                if( numberOfStudentsLeft >= GROUP_SIZE_UPPER_LIMIT) {
-                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT + random.nextInt(GROUP_SIZE_UPPER_LIMIT - GROUP_SIZE_LOWER_LIMIT + 1);
+                if (numberOfStudentsLeft >= GROUP_SIZE_UPPER_LIMIT) {
+                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT
+                            + random.nextInt(GROUP_SIZE_UPPER_LIMIT - GROUP_SIZE_LOWER_LIMIT + 1);
                     numberOfStudentsLeft -= numberOfStudentsInGroup;
                 } else {
-                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT + random.nextInt(numberOfStudentsLeft - GROUP_SIZE_LOWER_LIMIT + 1);
+                    numberOfStudentsInGroup = GROUP_SIZE_LOWER_LIMIT
+                            + random.nextInt(numberOfStudentsLeft - GROUP_SIZE_LOWER_LIMIT + 1);
                     numberOfStudentsLeft -= numberOfStudentsInGroup;
                 }
             }
-            for(int studentNumber = startStudentNumber; studentNumber < startStudentNumber + numberOfStudentsInGroup; studentNumber++) {
+            for (int studentNumber = startStudentNumber; studentNumber < startStudentNumber
+                    + numberOfStudentsInGroup; studentNumber++) {
                 int studentId = randomPermutation[studentNumber];
                 studentDistribution[studentId][0] = STUDENT_ASSIGNED;
                 studentDistribution[studentId][1] = groupId;
@@ -65,16 +69,16 @@ public class Assigner {
         }
         return studentDistribution;
     }
-    
+
     private int[] permuteRandomly(int n) {
         int[] permutation = new int[n];
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             permutation[i] = i;
         }
-        for (int i = n ; i > 0 ; i--) {
+        for (int i = n; i > 0; i--) {
             int index = random.nextInt(i);
-            int temp = permutation[i-1];
-            permutation[i-1] = permutation[index];
+            int temp = permutation[i - 1];
+            permutation[i - 1] = permutation[index];
             permutation[index] = temp;
         }
         return permutation;

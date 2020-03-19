@@ -19,19 +19,19 @@ public class Dialog {
     public static final String PROGRAM_ERROR = "Program error!";
     private static final String STUDENT_NOT_IN_DATABASE = "This student is not on the database.";
     private static final String SELECT_COURSE = "Select one of the folowing courses:";
-    
+
     private static final String MAIN_MENU = "Choose one of the following:\n"
             + "a. Find all groups with less or equals student count\n"
-            + "b. Find all students related to course with given name\n" 
-            + "c. Add new student\n"
+            + "b. Find all students related to course with given name\n" + "c. Add new student\n"
             + "d. Delete student by student_id\n" + "e. Assign a student to a course (from a list)\n"
-            + "f. Remove the student from one of his or her courses\n"
-            + "g. Exit the program";
+            + "f. Remove the student from one of his or her courses\n" + "g. Exit the program";
+    private static final String ENTER_STUDENT_ID = "Enter student_id: ";
+    private static final String NO_SUCH_COURSE = "No such course is available.";
     private static final String NO_SUCH_MENU = "No such menu available.";
-    private static final String WANT_TO_CONTINUE =  "Do you want to continue (yes/no)?";
+    private static final String WANT_TO_CONTINUE = "Do you want to continue (yes/no)?";
     private static final String BYE = "Thank you!\nBye!";
 
-    private Querier querier = new Querier();   
+    private Querier querier = new Querier();
     DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
 
     public void start(String dataGenerationResult) {
@@ -39,12 +39,15 @@ public class Dialog {
         case DB_ACCSESS_PROBLEM:
             System.out.println(Dialog.DB_ACCSESS_PROBLEM);
             System.out.println(Dialog.CONTACT_SUPPORT);
+            break;
         case FILE_ACCSESS_PROBLEM:
             System.out.println(Dialog.FILE_ACCSESS_PROBLEM);
             System.out.println(Dialog.CONTACT_SUPPORT);
+            break;
         case PROGRAM_ERROR:
             System.out.println(Dialog.PROGRAM_ERROR);
             System.out.println(Dialog.CONTACT_SUPPORT);
+            break;
         case DataGenerator.DATA_GENERATED:
             Scanner scanner = new Scanner(System.in);
             try (Connection connection = connectionGetter.getConnection()) {
@@ -61,15 +64,14 @@ public class Dialog {
             } finally {
                 scanner.close();
             }
+            break;
         }
-        
-
     }
-    
+
     private void showMainMenu(Connection connection, Scanner scanner) {
         boolean wantExitProgram = false;
         String option = MAIN_MENU;
-        while(!wantExitProgram) {
+        while (!wantExitProgram) {
             switch (option) {
             case MAIN_MENU:
                 System.out.println(MAIN_MENU);
@@ -107,11 +109,11 @@ public class Dialog {
             }
         }
     }
-    
+
     private String displayGroupsStudentCountNoMoreThan(Connection connection, Scanner scanner) {
         System.out.print("Enter student count: ");
         try {
-            int studentCount  = scanner.nextInt();
+            int studentCount = scanner.nextInt();
             System.out.println();
             printGroupsStudentCountLessThan(connection, studentCount);
             System.out.println();
@@ -127,12 +129,12 @@ public class Dialog {
             return askToContinueProgram(scanner);
         }
     }
-    
+
     private String displayStudentsRelatedToCourse(Connection connection, Scanner scanner) {
         try {
             System.out.println(SELECT_COURSE);
             displayAvailableCourses();
-            
+
             String courseName = scanner.nextLine();
             printStudentsRelatedToCourse(connection, courseName);
             return askToContinueProgram(scanner);
@@ -142,7 +144,7 @@ public class Dialog {
             return askToContinueProgram(scanner);
         }
     }
-    
+
     private String addNewStudent(Connection connection, Scanner scanner) {
         try {
             System.out.print("Enter first name: ");
@@ -158,13 +160,13 @@ public class Dialog {
             return askToContinueProgram(scanner);
         }
     }
-    
+
     private String deleteStudentById(Connection connection, Scanner scanner) {
-        System.out.println("Enter student_id: ");
+        System.out.println(ENTER_STUDENT_ID);
         try {
             int studentId = scanner.nextInt();
             if (!querier.isStudentAvailable(connection, studentId)) {
-                System.out.println("This student is not on the database.");
+                System.out.println(STUDENT_NOT_IN_DATABASE);
                 scanner.nextLine();
                 return askToContinueProgram(scanner);
             } else {
@@ -183,9 +185,9 @@ public class Dialog {
             return askToContinueProgram(scanner);
         }
     }
-    
+
     private String assignStudentToCourse(Connection connection, Scanner scanner) {
-        System.out.println("Enter student_id: ");
+        System.out.println(ENTER_STUDENT_ID);
         try {
             int studentId = scanner.nextInt();
             if (!querier.isStudentAvailable(connection, studentId)) {
@@ -211,23 +213,23 @@ public class Dialog {
             return askToContinueProgram(scanner);
         }
     }
-    
+
     private void displayStudentToCourseAssignementResult(int removalResult) {
         switch (removalResult) {
-            case Querier.COURSE_NOT_AVAILABLE :
-                System.out.println("No such course is available.");
-                break;
-            case Querier.STUDENT_ALREADY_ASSIGNED :
-                System.out.println("Student is already assigned to this course.");
-                break;  
-            case Querier.STUDENT_ASSIGNED_SUCCESSFULLY :
-                System.out.println("The student has been assigned to selected course.");
-                break;          
+        case Querier.COURSE_NOT_AVAILABLE:
+            System.out.println(NO_SUCH_COURSE);
+            break;
+        case Querier.STUDENT_ALREADY_ASSIGNED:
+            System.out.println("Student is already assigned to this course.");
+            break;
+        case Querier.STUDENT_ASSIGNED_SUCCESSFULLY:
+            System.out.println("The student has been assigned to selected course.");
+            break;
         }
     }
-    
+
     private String removeStudentFromCourse(Connection connection, Scanner scanner) {
-        System.out.println("Enter student_id: ");
+        System.out.println(ENTER_STUDENT_ID);
         try {
             int studentId = scanner.nextInt();
             if (!querier.isStudentAvailable(connection, studentId)) {
@@ -253,21 +255,21 @@ public class Dialog {
             return askToContinueProgram(scanner);
         }
     }
-    
+
     private void displayStudentFromCourseRemovalResult(int removalResult) {
         switch (removalResult) {
-            case Querier.COURSE_NOT_AVAILABLE :
-                System.out.println("No such course is available.");
-                break;
-            case Querier.STUDENT_NOT_ASSIGNED_TO_COURSE :
-                System.out.println("The student is not assigned to this course.");
-                break;   
-            case Querier.STUDENT_REMOVED_FROM_COURSE :
-                System.out.println("The student has been removed from selected course.");
-                break;           
+        case Querier.COURSE_NOT_AVAILABLE:
+            System.out.println(NO_SUCH_COURSE);
+            break;
+        case Querier.STUDENT_NOT_ASSIGNED_TO_COURSE:
+            System.out.println("The student is not assigned to this course.");
+            break;
+        case Querier.STUDENT_REMOVED_FROM_COURSE:
+            System.out.println("The student has been removed from selected course.");
+            break;
         }
     }
-    
+
     private String askToContinueProgram(Scanner scanner) {
         System.out.println(WANT_TO_CONTINUE);
         String answer = scanner.nextLine();
@@ -281,7 +283,7 @@ public class Dialog {
             }
         }
     }
-        
+
     private void printGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
         String groups = querier.getGroupsStudentCountLessThan(connection, n);
         if (groups.length() == 0) {
@@ -290,21 +292,21 @@ public class Dialog {
             System.out.print(groups);
         }
     }
-    
+
     private void printStudentsRelatedToCourse(Connection connection, String courseName) throws SQLException {
         List<String> availableCourses = Course.getAvailableCourses();
-        if(availableCourses.contains(courseName)) {
+        if (availableCourses.contains(courseName)) {
             int courseId = availableCourses.indexOf(courseName);
             String students = querier.getStudentsRelatedToCourse(connection, courseId);
             System.out.println(students);
         } else {
-            System.out.println("No such course is available.");
+            System.out.println(NO_SUCH_COURSE);
         }
     }
 
     public void displayAvailableCourses() {
         List<String> availableCourses = Course.getAvailableCourses();
-        for (String courseName: availableCourses) {
+        for (String courseName : availableCourses) {
             System.out.print(courseName + "  ");
         }
         System.out.println();

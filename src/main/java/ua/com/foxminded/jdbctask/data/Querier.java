@@ -12,13 +12,13 @@ import java.util.Map;
 import ua.com.foxminded.jdbctask.models.Course;
 
 public class Querier {
-   
+
     public static final int STUDENT_NOT_ASSIGNED_TO_COURSE = -1;
     public static final int COURSE_NOT_AVAILABLE = 0;
     public static final int STUDENT_REMOVED_FROM_COURSE = 1;
-    public static final int STUDENT_ALREADY_ASSIGNED = 2; 
+    public static final int STUDENT_ALREADY_ASSIGNED = 2;
     public static final int STUDENT_ASSIGNED_SUCCESSFULLY = 3;
-    
+
     public int removeStudentFromCourse(Connection connection, int studentId, String courseName) throws SQLException {
         List<Integer> studentCourses = getStudentCourses(connection, studentId);
         List<String> availableCourses = Course.getAvailableCourses();
@@ -41,7 +41,7 @@ public class Querier {
             }
         }
     }
-    
+
     public int assignStudentToCourse(Connection connection, int studentId, String courseName) throws SQLException {
         List<String> availableCourses = Course.getAvailableCourses();
         boolean courseAvailable = availableCourses.contains(courseName);
@@ -62,13 +62,14 @@ public class Querier {
                 return STUDENT_ASSIGNED_SUCCESSFULLY;
             }
         }
-    }   
-    
+    }
+
     List<Integer> getStudentCourses(Connection connection, int studentId) throws SQLException {
         List<Integer> courses = new ArrayList<>();
-        try (PreparedStatement selectStudentsCourses = connection.prepareStatement(SqlQueryConstants.SELECT_STUDENTS_COURSES)) {
+        try (PreparedStatement selectStudentsCourses = connection
+                .prepareStatement(SqlQueryConstants.SELECT_STUDENTS_COURSES)) {
             selectStudentsCourses.setInt(1, studentId);
-            try(ResultSet rs = selectStudentsCourses.executeQuery()) {
+            try (ResultSet rs = selectStudentsCourses.executeQuery()) {
                 while (rs.next()) {
                     int courseId = rs.getInt(1);
                     courses.add(courseId);
@@ -92,21 +93,22 @@ public class Querier {
             insterNewStudent.executeUpdate();
         }
     }
-    
+
     public boolean isStudentAvailable(Connection connection, int studentId) throws SQLException {
         boolean studentAvailable;
-        try (PreparedStatement selectStudentById = connection.prepareStatement(SqlQueryConstants.SELECT_STUDENT_BY_ID)) {
+        try (PreparedStatement selectStudentById = connection
+                .prepareStatement(SqlQueryConstants.SELECT_STUDENT_BY_ID)) {
             selectStudentById.setInt(1, studentId);
-            try(ResultSet rs = selectStudentById.executeQuery()) {
+            try (ResultSet rs = selectStudentById.executeQuery()) {
                 studentAvailable = rs.next();
             }
         }
         return studentAvailable;
     }
-    
+
     public String getGroupsStudentCountLessThan(Connection connection, int n) throws SQLException {
         StringBuilder output = new StringBuilder();
-        if(n < 0) {
+        if (n < 0) {
             return output.toString();
         }
         try (PreparedStatement groupsStudentCountLessThan = connection
@@ -117,21 +119,23 @@ public class Querier {
                     int groupId = rs.getInt(1);
                     String groupName = rs.getString(2);
                     int studentCount = rs.getInt(3);
-                    String line = String.format("%1$-15s %2$-22s %3$-20s\n","group id: " + groupId, "group name: " + groupName, "student count: " + studentCount);
+                    String line = String.format("%1$-15s %2$-22s %3$-20s\n", "group id: " + groupId,
+                            "group name: " + groupName, "student count: " + studentCount);
                     output.append(line);
                 }
             }
         }
         List<Integer> emptyGroupsIds = getEmptyGroupsIds(connection);
         Map<Integer, String> groupIdToNameMap = getGroupIdToNameMap(connection);
-        for(Integer groupId: emptyGroupsIds) {
+        for (Integer groupId : emptyGroupsIds) {
             String groupName = groupIdToNameMap.get(groupId);
-            String line = String.format("%1$-15s %2$-22s %3$-20s\n","group id: " + groupId, "group name: " + groupName, "student count: " + 0);
+            String line = String.format("%1$-15s %2$-22s %3$-20s\n", "group id: " + groupId, "group name: " + groupName,
+                    "student count: " + 0);
             output.append(line);
         }
         return output.toString();
     }
-    
+
     public List<Integer> getEmptyGroupsIds(Connection connection) throws SQLException {
         List<Integer> groupsWithStudents = new ArrayList<>();
         List<Integer> groupsWithoutStudents = new ArrayList<>();
@@ -146,19 +150,19 @@ public class Querier {
                 }
             }
         }
-        for(int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
+        for (int groupId = 0; groupId < Assigner.NUMBER_OF_GROUPS; groupId++) {
             if (!groupsWithStudents.contains(groupId)) {
                 groupsWithoutStudents.add(groupId);
             }
         }
         return groupsWithoutStudents;
     }
-    
+
     Map<Integer, String> getGroupIdToNameMap(Connection connection) throws SQLException {
         Map<Integer, String> groupIdToNameMap = new HashMap<>();
         try (PreparedStatement selectGroups = connection.prepareStatement(SqlQueryConstants.SELECT_GROUPS)) {
             try (ResultSet rs = selectGroups.executeQuery()) {
-                while(rs.next()) {
+                while (rs.next()) {
                     int groupId = rs.getInt(1);
                     String groupName = rs.getString(2);
                     groupIdToNameMap.put(groupId, groupName);
@@ -178,7 +182,8 @@ public class Querier {
                     String studentId = rs.getString(1);
                     String firstName = rs.getString(2);
                     String lastName = rs.getString(3);
-                    String line = String.format("%1$-23s %2$-25s %3$-25s \n","student id: " + studentId, "first name: " + firstName, "last name: " + lastName);
+                    String line = String.format("%1$-23s %2$-25s %3$-25s \n", "student id: " + studentId,
+                            "first name: " + firstName, "last name: " + lastName);
                     output.append(line);
                 }
             }

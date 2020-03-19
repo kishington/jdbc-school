@@ -10,14 +10,16 @@ import java.util.Properties;
 
 public class DatabaseConnectionGetter {
     private static final String DB_PROPERTIES_PATH = "/config.properties";
-    
-    public Connection getConnection() throws IOException, SQLException, ClassNotFoundException {
+
+    public Connection getConnection()
+            throws NullCredentialsException, SQLException, ClassNotFoundException, IOException {
         Connection connection = null;
         String jdbcDriver = null;
         String dbUrl = null;
         String user = null;
         String password = null;
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(DB_PROPERTIES_PATH)))) {
+        try (BufferedReader input = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream(DB_PROPERTIES_PATH)))) {
             Properties properties = new Properties();
             properties.load(input);
             jdbcDriver = properties.getProperty("jdbcDriver");
@@ -27,10 +29,10 @@ public class DatabaseConnectionGetter {
         }
         boolean credentialsNotNull = (jdbcDriver != null) && (dbUrl != null) && (user != null) && (password != null);
         if (credentialsNotNull) {
-            Class.forName(jdbcDriver);    
+            Class.forName(jdbcDriver);
             connection = DriverManager.getConnection(dbUrl, user, password);
         } else {
-            throw new NullPointerException();
+            throw new NullCredentialsException();
         }
         return connection;
     }

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
+    private Student() {
+        
+    }
 
     public static final List<String> firstNames = new ArrayList<>();
     static {
