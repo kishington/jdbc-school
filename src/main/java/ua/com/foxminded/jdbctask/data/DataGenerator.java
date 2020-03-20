@@ -29,8 +29,12 @@ public class DataGenerator {
     }
 
     public void generateData() throws DataGenerationException {
+        generateData(Constants.DB_PROPERTIES_PATH);
+    }
+    
+    public void generateData(String databasePropertiesPath) throws DataGenerationException {
         DatabaseConnectionGetter connectionGetter = new DatabaseConnectionGetter();
-        try (Connection connection = connectionGetter.getConnection()) {
+        try (Connection connection = connectionGetter.getConnection(databasePropertiesPath)) {
             createTables(connection);
             insertGroups(connection);
             insertStudents(connection);

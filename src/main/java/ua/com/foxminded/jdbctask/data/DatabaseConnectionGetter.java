@@ -12,17 +12,17 @@ import ua.com.foxminded.jdbctask.exceptions.DatabaseConnectionException;
 import ua.com.foxminded.jdbctask.exceptions.NullCredentialsException;
 
 public class DatabaseConnectionGetter {
-    private static final String DB_PROPERTIES_PATH = "/config.properties";
+    
     private static final String NO_DB_CONNECTION = "Could not establish database connection.";
-
-    public Connection getConnection() throws DatabaseConnectionException  {
+    
+    public Connection getConnection(String databasePropertiesPath) throws DatabaseConnectionException  {
         Connection connection = null;
         String jdbcDriver = null;
         String dbUrl = null;
         String user = null;
         String password = null;
         try (BufferedReader input = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream(DB_PROPERTIES_PATH)))) {
+                new InputStreamReader(getClass().getResourceAsStream(databasePropertiesPath)))) {
             Properties properties = new Properties();
             properties.load(input);
             jdbcDriver = properties.getProperty("jdbcDriver");

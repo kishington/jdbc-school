@@ -36,7 +36,7 @@ public class Dialog {
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
-        try (Connection connection = connectionGetter.getConnection()) {
+        try (Connection connection = connectionGetter.getConnection(Constants.DB_PROPERTIES_PATH)) {
             showMainMenu(connection, scanner);
         } catch (SQLException e) {
             System.out.println(DB_ACCSESS_PROBLEM);

@@ -1,6 +1,8 @@
 package ua.com.foxminded.jdbctask.data;
 
 public interface Constants {
+    
+    public static final String DB_PROPERTIES_PATH = "/config.properties";
 
     public static final int GROUP_SIZE_LOWER_LIMIT = 10;
     public static final int GROUP_SIZE_UPPER_LIMIT = 30;

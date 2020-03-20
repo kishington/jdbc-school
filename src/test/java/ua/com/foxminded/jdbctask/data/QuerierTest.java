@@ -26,12 +26,12 @@ class QuerierTest {
     @BeforeAll
     private static void init() throws DatabaseConnectionException {
         DatabaseConnectionGetter dbConnGetter = new DatabaseConnectionGetter();
-        connection = dbConnGetter.getConnection();
+        connection = dbConnGetter.getConnection(DataGeneratorTest.TEST_DB_PROPERTIES_PATH);
     }
 
     @BeforeEach
     public void initEach() throws DataGenerationException {
-        dataGenerator.generateData();
+        dataGenerator.generateData(DataGeneratorTest.TEST_DB_PROPERTIES_PATH);
     }
 
     @AfterAll
@@ -196,9 +196,9 @@ class QuerierTest {
         }
 
         String expected = "student id: 0           first name: Petr1         last name: Petrov1        \n"
-                + "student id: 1           first name: Petr2         last name: Petrov2        \n"
-                + "student id: 2           first name: Petr3         last name: Petrov3        \n"
-                + "student id: 3           first name: Petr4         last name: Petrov4        \n";
+                        + "student id: 1           first name: Petr2         last name: Petrov2        \n"
+                        + "student id: 2           first name: Petr3         last name: Petrov3        \n"
+                        + "student id: 3           first name: Petr4         last name: Petrov4        \n";
         String actual = querier.getStudentsRelatedToCourse(connection, 0);
         assertEquals(expected, actual);
     }
