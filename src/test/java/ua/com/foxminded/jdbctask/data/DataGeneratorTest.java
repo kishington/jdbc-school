@@ -9,8 +9,8 @@ import java.sql.SQLException;
 
 import org.junit.jupiter.api.Test;
 
-import jdbctask.exceptions.DataGenerationException;
-import jdbctask.exceptions.DatabaseConnectionException;
+import ua.com.foxminded.jdbctask.exceptions.DataGenerationException;
+import ua.com.foxminded.jdbctask.exceptions.DatabaseConnectionException;
 
 class DataGeneratorTest {
     private static final DatabaseConnectionGetter dbConnGetter = new DatabaseConnectionGetter();

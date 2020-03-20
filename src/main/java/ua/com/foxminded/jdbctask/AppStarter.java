@@ -1,7 +1,7 @@
 package ua.com.foxminded.jdbctask;
 
-import jdbctask.exceptions.DataGenerationException;
 import ua.com.foxminded.jdbctask.data.DataGenerator;
+import ua.com.foxminded.jdbctask.exceptions.DataGenerationException;
 import ua.com.foxminded.jdbctask.menu.Dialog;
 
 public class AppStarter {

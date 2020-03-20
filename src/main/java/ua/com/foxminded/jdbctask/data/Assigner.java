@@ -60,12 +60,12 @@ public class Assigner {
         return studentDistribution;
     }
 
-    private int[] permuteRandomly(int n) {
-        int[] permutation = new int[n];
-        for (int i = 0; i < n; i++) {
+    private int[] permuteRandomly(int numberOfIntegersStartingFromOne) {
+        int[] permutation = new int[numberOfIntegersStartingFromOne];
+        for (int i = 0; i < numberOfIntegersStartingFromOne; i++) {
             permutation[i] = i;
         }
-        for (int i = n; i > 0; i--) {
+        for (int i = numberOfIntegersStartingFromOne; i > 0; i--) {
             int index = random.nextInt(i);
             int temp = permutation[i - 1];
             permutation[i - 1] = permutation[index];

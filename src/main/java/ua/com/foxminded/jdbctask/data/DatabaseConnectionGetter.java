@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
-import jdbctask.exceptions.DatabaseConnectionException;
-import jdbctask.exceptions.NullCredentialsException;
+import ua.com.foxminded.jdbctask.exceptions.DatabaseConnectionException;
+import ua.com.foxminded.jdbctask.exceptions.NullCredentialsException;
 
 public class DatabaseConnectionGetter {
     private static final String DB_PROPERTIES_PATH = "/config.properties";
@@ -29,15 +30,15 @@ public class DatabaseConnectionGetter {
             user = properties.getProperty("dbUser");
             password = properties.getProperty("dbPassword");
         } catch (IOException e) {
-            throw new DatabaseConnectionException(NO_DB_CONNECTION);
+            throw new DatabaseConnectionException(NO_DB_CONNECTION, e);
         }
         boolean credentialsNotNull = (jdbcDriver != null) && (dbUrl != null) && (user != null) && (password != null);
         if (credentialsNotNull) {
             try {
                 Class.forName(jdbcDriver);
                 connection = DriverManager.getConnection(dbUrl, user, password);
-            } catch (Exception e) {
-                throw new DatabaseConnectionException(NO_DB_CONNECTION);
+            } catch (ClassNotFoundException | SQLException e) {
+                throw new DatabaseConnectionException(NO_DB_CONNECTION, e);
             }
         } else {
             throw new NullCredentialsException("One of credentials (jdbcDriver, dbUrl, dbUser, dbPassword) was null.");

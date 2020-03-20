@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jdbctask.exceptions.DataGenerationException;
-import jdbctask.exceptions.DatabaseConnectionException;
+import ua.com.foxminded.jdbctask.exceptions.DataGenerationException;
+import ua.com.foxminded.jdbctask.exceptions.DatabaseConnectionException;
 
 class QuerierTest {
     private static final Querier querier = new Querier();

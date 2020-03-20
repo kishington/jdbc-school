@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import jdbctask.exceptions.DataGenerationException;
+import ua.com.foxminded.jdbctask.exceptions.DataGenerationException;
+import ua.com.foxminded.jdbctask.exceptions.DatabaseConnectionException;
 import ua.com.foxminded.jdbctask.models.Course;
 import ua.com.foxminded.jdbctask.models.Group;
 import ua.com.foxminded.jdbctask.models.Student;
@@ -35,9 +36,9 @@ public class DataGenerator {
             insertStudents(connection);
             insertCourses(connection);
             insertStudentsToCoursesRelations(connection);
-        } catch (Exception e) {
-            throw new DataGenerationException(DATA_GENERATION_FAIL);
-        } 
+        } catch (SQLException | IOException | DatabaseConnectionException e) {
+            throw new DataGenerationException(DATA_GENERATION_FAIL, e);
+        }
     }
 
     private void createTables(Connection connection) throws SQLException, IOException {
